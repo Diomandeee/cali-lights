@@ -105,31 +105,42 @@ export default function Home() {
           transition={{ delay: 1, duration: 1 }}
           className="mt-16"
         >
-          <motion.a
-            href="/solo?cfg=solo.v1"
-            className="inline-block px-12 py-6 bg-gradient-to-r from-cali-magenta via-cali-purple to-cali-pink text-white text-xl md:text-2xl font-bold rounded-full shadow-2xl"
-            whileHover={{
-              scale: 1.05,
-              boxShadow: "0 0 40px rgba(233, 30, 140, 0.6), 0 0 80px rgba(168, 85, 247, 0.4)"
-            }}
-            whileTap={{ scale: 0.95 }}
-            animate={{
-              boxShadow: [
-                "0 0 20px rgba(233, 30, 140, 0.3)",
-                "0 0 40px rgba(233, 30, 140, 0.5), 0 0 60px rgba(168, 85, 247, 0.3)",
-                "0 0 20px rgba(233, 30, 140, 0.3)",
-              ],
-            }}
-            transition={{
-              boxShadow: {
-                duration: 2,
-                repeat: Infinity,
-                ease: "easeInOut"
-              }
-            }}
-          >
-            Begin Your Journey
-          </motion.a>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <motion.a
+              href="/solo?cfg=solo.v1"
+              className="inline-block px-12 py-6 bg-gradient-to-r from-cali-magenta via-cali-purple to-cali-pink text-white text-xl md:text-2xl font-bold rounded-full shadow-2xl"
+              whileHover={{
+                scale: 1.05,
+                boxShadow: "0 0 40px rgba(233, 30, 140, 0.6), 0 0 80px rgba(168, 85, 247, 0.4)"
+              }}
+              whileTap={{ scale: 0.95 }}
+              animate={{
+                boxShadow: [
+                  "0 0 20px rgba(233, 30, 140, 0.3)",
+                  "0 0 40px rgba(233, 30, 140, 0.5), 0 0 60px rgba(168, 85, 247, 0.3)",
+                  "0 0 20px rgba(233, 30, 140, 0.3)",
+                ],
+              }}
+              transition={{
+                boxShadow: {
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "easeInOut"
+                }
+              }}
+            >
+              Begin Your Journey
+            </motion.a>
+
+            <motion.a
+              href="/memories"
+              className="inline-block px-8 py-4 border-2 border-cali-purple text-cali-purple text-lg font-semibold rounded-full hover:bg-cali-purple/10 transition-all"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              📸 View Memories
+            </motion.a>
+          </div>
         </motion.div>
 
         {/* Decorative sparkles */}
@@ -158,6 +169,17 @@ export default function Home() {
             </motion.div>
           ))}
         </div>
+
+        {/* Discreet admin link */}
+        <motion.a
+          href="/admin"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 0.3 }}
+          whileHover={{ opacity: 1 }}
+          className="fixed bottom-4 right-4 text-xs text-gray-600 hover:text-cali-magenta transition-colors"
+        >
+          Admin
+        </motion.a>
       </div>
     </main>
   );

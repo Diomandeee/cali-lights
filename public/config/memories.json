@@ -1,0 +1,21 @@
+{
+  "memories": [
+    {
+      "id": 1,
+      "title": "That Night",
+      "date": "2024-11-05",
+      "timestamp": 1730851200000,
+      "description": "The night that started it all. Tacos, tequila, and those unforgettable lights.",
+      "photos": [
+        "/media/venue.jpg"
+      ],
+      "tags": ["venue", "lights", "birthday"],
+      "location": "The Venue"
+    }
+  ],
+  "settings": {
+    "display_mode": "timeline",
+    "sort_order": "chronological",
+    "show_dates": true
+  }
+}
