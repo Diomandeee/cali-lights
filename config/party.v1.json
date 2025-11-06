@@ -1,0 +1,60 @@
+{
+  "rounds": [
+    {
+      "type": "tap-beat",
+      "duration": 90,
+      "threshold": 0.7,
+      "bpm": 120,
+      "description": "Tap together to the beat"
+    },
+    {
+      "type": "salt-lime-sip",
+      "duration": 45,
+      "description": "Perform the ritual together"
+    },
+    {
+      "type": "palette-pick",
+      "duration": 60,
+      "description": "Vote for the palette that matches the night",
+      "options": ["gold", "green", "mixed", "venue"]
+    },
+    {
+      "type": "memory-fragments",
+      "duration": 120,
+      "description": "Share your favorite moment from tonight",
+      "prompt": "What made tonight special?"
+    }
+  ],
+  "unlock": {
+    "condition": "score>=75",
+    "message": "You've unlocked the birthday reward.",
+    "cta": {
+      "label": "Open Invite",
+      "href": "/invite"
+    }
+  },
+  "thresholds": {
+    "gold": 90,
+    "silver": 75,
+    "bronze": 60
+  },
+  "messages": {
+    "lobby": {
+      "title": "Welcome to the party",
+      "subtitle": "Scan the QR code to join",
+      "waiting": "Waiting for more players..."
+    },
+    "round_intro": {
+      "tap-beat": "Feel the rhythm together",
+      "salt-lime-sip": "Time for the ritual",
+      "palette-pick": "Choose your memory",
+      "memory-fragments": "Share the moment"
+    },
+    "round_complete": {
+      "excellent": "Perfect sync!",
+      "good": "Great work!",
+      "okay": "Not bad!",
+      "retry": "One more try?"
+    }
+  }
+}

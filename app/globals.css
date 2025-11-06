@@ -1,0 +1,43 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --cali-gold: #DB962C;
+  --cali-green: #44553B;
+  --cali-black: #111111;
+}
+
+@layer base {
+  body {
+    @apply bg-cali-black text-white antialiased;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+
+  * {
+    @apply border-cali-green;
+  }
+}
+
+@layer utilities {
+  .gradient-gold {
+    background: linear-gradient(135deg, var(--cali-gold) 0%, rgba(219, 150, 44, 0.6) 100%);
+  }
+
+  .gradient-green {
+    background: linear-gradient(135deg, var(--cali-green) 0%, rgba(68, 85, 59, 0.6) 100%);
+  }
+
+  .shimmer {
+    animation: shimmer 2s ease-in-out infinite;
+  }
+
+  .text-glow {
+    text-shadow: 0 0 20px rgba(219, 150, 44, 0.5);
+  }
+
+  .tap-active {
+    transform: scale(0.95);
+    transition: transform 0.1s ease;
+  }
+}

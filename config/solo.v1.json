@@ -1,0 +1,116 @@
+{
+  "active_level": 1,
+  "levels": [
+    {
+      "id": 1,
+      "slug": "tacos",
+      "steps": [
+        {
+          "text": "It started with tacos.",
+          "duration": 3000,
+          "animation": "fadeIn"
+        },
+        {
+          "text": "The kind that make you forget about everything else.",
+          "duration": 4000,
+          "animation": "fadeIn"
+        },
+        {
+          "text": "Just good food, good people.",
+          "duration": 3000,
+          "animation": "fadeIn"
+        },
+        {
+          "text": "A perfect beginning.",
+          "duration": 3000,
+          "animation": "fadeIn"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "slug": "tequila",
+      "mini_game": "salt-lime-sip",
+      "steps": [
+        {
+          "text": "Then came the tequila.",
+          "duration": 3000,
+          "animation": "fadeIn"
+        },
+        {
+          "text": "You know the drill.",
+          "duration": 2000,
+          "animation": "fadeIn"
+        },
+        {
+          "text": "Salt. Lime. Sip.",
+          "duration": 2000,
+          "animation": "fadeIn"
+        },
+        {
+          "text": "Ready?",
+          "duration": 2000,
+          "animation": "pulse"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "slug": "cali-lights",
+      "song": "spotify:track:placeholder",
+      "steps": [
+        {
+          "text": "The lights came on.",
+          "duration": 2000,
+          "animation": "fadeIn"
+        },
+        {
+          "text": "Gold and green, dancing across the walls.",
+          "duration": 4000,
+          "animation": "shimmer"
+        },
+        {
+          "text": "Like the whole room was breathing.",
+          "duration": 3000,
+          "animation": "pulse"
+        },
+        {
+          "text": "That's when everything changed.",
+          "duration": 3000,
+          "animation": "fadeIn"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "slug": "birthday",
+      "locked": true,
+      "steps": [
+        {
+          "text": "This is where the story continues.",
+          "duration": 3000,
+          "animation": "fadeIn"
+        },
+        {
+          "text": "But you'll have to wait for your birthday.",
+          "duration": 4000,
+          "animation": "fadeIn"
+        },
+        {
+          "text": "Trust me, it'll be worth it.",
+          "duration": 3000,
+          "animation": "shimmer"
+        }
+      ]
+    }
+  ],
+  "birthday_unlock": {
+    "gate": "levels_completed>=3",
+    "date": "2025-12-31",
+    "message": "I owe you a round where the lights are even better.",
+    "cta": {
+      "label": "See the invite",
+      "href": "/invite"
+    }
+  }
+}
