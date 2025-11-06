@@ -89,7 +89,7 @@ export default function SoloPage() {
   if (isLoading) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-cali-black">
-        <div className="animate-shimmer text-cali-gold text-2xl">
+        <div className="animate-shimmer text-cali-magenta text-2xl">
           Loading...
         </div>
       </main>
@@ -114,7 +114,7 @@ export default function SoloPage() {
           animate={{ opacity: 1, scale: 1 }}
           className="text-center space-y-6"
         >
-          <h2 className="text-3xl font-bold text-cali-gold text-glow">
+          <h2 className="text-3xl font-bold text-cali-magenta text-glow">
             Level Complete
           </h2>
           <p className="text-white text-lg">
@@ -156,7 +156,7 @@ export default function SoloPage() {
           <p className="text-white text-2xl md:text-3xl leading-relaxed">
             {currentStep.text}
           </p>
-          <div className="mt-8 text-cali-gold text-sm opacity-50">
+          <div className="mt-8 text-cali-magenta text-sm opacity-50">
             Tap to continue
           </div>
         </motion.div>
@@ -168,7 +168,7 @@ export default function SoloPage() {
           <div
             key={index}
             className={`h-1 flex-1 max-w-12 rounded-full transition-colors ${
-              index <= currentStepIndex ? "bg-cali-gold" : "bg-gray-700"
+              index <= currentStepIndex ? "bg-cali-magenta" : "bg-gray-700"
             }`}
           />
         ))}

@@ -32,7 +32,7 @@ export default function Lobby({ onJoin, participantCount }: LobbyProps) {
         {/* Header */}
         <div className="text-center space-y-4">
           <motion.h1
-            className="text-5xl font-bold text-cali-gold text-glow"
+            className="text-5xl font-bold text-cali-magenta text-glow"
             animate={{ opacity: [0.7, 1, 0.7] }}
             transition={{ duration: 3, repeat: Infinity }}
           >
@@ -40,7 +40,7 @@ export default function Lobby({ onJoin, participantCount }: LobbyProps) {
           </motion.h1>
           <p className="text-white text-xl">Join the party</p>
           {participantCount > 0 && (
-            <p className="text-cali-gold text-sm">
+            <p className="text-cali-magenta text-sm">
               {participantCount} {participantCount === 1 ? "person" : "people"}{" "}
               already here
             </p>
@@ -62,7 +62,7 @@ export default function Lobby({ onJoin, participantCount }: LobbyProps) {
               value={nickname}
               onChange={(e) => setNickname(e.target.value)}
               placeholder="Enter your name"
-              className="w-full px-4 py-3 bg-cali-green/20 border border-cali-green text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-cali-gold placeholder-gray-500"
+              className="w-full px-4 py-3 bg-cali-purple/20 border border-cali-purple text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-cali-magenta placeholder-gray-500"
               maxLength={20}
               required
               disabled={isSubmitting}
@@ -82,7 +82,7 @@ export default function Lobby({ onJoin, participantCount }: LobbyProps) {
               value={instagram}
               onChange={(e) => setInstagram(e.target.value)}
               placeholder="@username"
-              className="w-full px-4 py-3 bg-cali-green/20 border border-cali-green text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-cali-gold placeholder-gray-500"
+              className="w-full px-4 py-3 bg-cali-purple/20 border border-cali-purple text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-cali-magenta placeholder-gray-500"
               maxLength={30}
               disabled={isSubmitting}
             />
@@ -91,7 +91,7 @@ export default function Lobby({ onJoin, participantCount }: LobbyProps) {
           <motion.button
             type="submit"
             disabled={!nickname.trim() || isSubmitting}
-            className="w-full py-4 bg-cali-gold text-cali-black font-bold text-lg rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full py-4 bg-cali-magenta text-cali-black font-bold text-lg rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
             whileTap={{ scale: 0.98 }}
             whileHover={{ scale: 1.02 }}
           >

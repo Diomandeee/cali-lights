@@ -33,7 +33,7 @@ export default function Unlock({ config }: UnlockProps) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
-          className="text-5xl font-bold text-cali-gold text-glow"
+          className="text-5xl font-bold text-cali-magenta text-glow"
         >
           Unlocked!
         </motion.h1>
@@ -55,7 +55,7 @@ export default function Unlock({ config }: UnlockProps) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1.2 }}
-            className="inline-block px-8 py-4 bg-cali-gold text-cali-black font-bold text-lg rounded-full"
+            className="inline-block px-8 py-4 bg-cali-magenta text-cali-black font-bold text-lg rounded-full"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
@@ -68,7 +68,7 @@ export default function Unlock({ config }: UnlockProps) {
           {[...Array(8)].map((_, i) => (
             <motion.div
               key={i}
-              className="absolute text-cali-gold text-2xl"
+              className="absolute text-cali-magenta text-2xl"
               style={{
                 left: `${50 + Math.cos((i * Math.PI) / 4) * 150}px`,
                 top: `${Math.sin((i * Math.PI) / 4) * 150}px`,

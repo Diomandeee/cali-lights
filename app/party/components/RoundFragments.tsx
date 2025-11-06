@@ -53,7 +53,7 @@ export default function RoundFragments({
           Memory Fragments
         </h2>
         <p className="text-gray-400 text-sm mb-2">{prompt}</p>
-        <p className="text-cali-gold text-lg">{formatTime(timeRemaining)}</p>
+        <p className="text-cali-magenta text-lg">{formatTime(timeRemaining)}</p>
       </div>
 
       {/* Input area */}
@@ -68,7 +68,7 @@ export default function RoundFragments({
             onChange={(e) => setMemory(e.target.value.slice(0, maxLength))}
             disabled={hasSubmitted}
             placeholder="Share your favorite moment..."
-            className="w-full h-48 px-6 py-4 bg-cali-green/20 border-2 border-cali-green text-white rounded-2xl focus:outline-none focus:ring-2 focus:ring-cali-gold placeholder-gray-500 resize-none text-lg disabled:opacity-50"
+            className="w-full h-48 px-6 py-4 bg-cali-purple/20 border-2 border-cali-purple text-white rounded-2xl focus:outline-none focus:ring-2 focus:ring-cali-magenta placeholder-gray-500 resize-none text-lg disabled:opacity-50"
             maxLength={maxLength}
           />
 
@@ -82,7 +82,7 @@ export default function RoundFragments({
         <motion.button
           onClick={handleSubmit}
           disabled={!memory.trim() || hasSubmitted}
-          className="w-full mt-6 py-4 bg-cali-gold text-cali-black font-bold text-lg rounded-xl disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full mt-6 py-4 bg-cali-magenta text-cali-black font-bold text-lg rounded-xl disabled:opacity-50 disabled:cursor-not-allowed"
           whileTap={!hasSubmitted ? { scale: 0.98 } : {}}
           whileHover={!hasSubmitted ? { scale: 1.02 } : {}}
         >
@@ -112,7 +112,7 @@ export default function RoundFragments({
         {[...Array(5)].map((_, i) => (
           <motion.div
             key={i}
-            className="absolute w-2 h-2 bg-cali-gold rounded-full opacity-20"
+            className="absolute w-2 h-2 bg-cali-magenta rounded-full opacity-20"
             style={{
               left: `${20 + i * 15}%`,
               top: `${30 + (i % 2) * 40}%`,

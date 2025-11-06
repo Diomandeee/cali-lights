@@ -72,7 +72,7 @@ export default function RoundTapBeat({
         <h2 className="text-2xl font-bold text-white mb-2">
           Tap to the Beat
         </h2>
-        <p className="text-cali-gold text-lg">{formatTime(timeRemaining)}</p>
+        <p className="text-cali-magenta text-lg">{formatTime(timeRemaining)}</p>
       </div>
 
       {/* Beat indicator */}
@@ -84,17 +84,17 @@ export default function RoundTapBeat({
               animate={{ scale: 2, opacity: 0 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3 }}
-              className="absolute inset-0 rounded-full border-4 border-cali-gold"
+              className="absolute inset-0 rounded-full border-4 border-cali-magenta"
             />
           )}
         </AnimatePresence>
-        <div className="w-4 h-4 bg-cali-gold rounded-full" />
+        <div className="w-4 h-4 bg-cali-magenta rounded-full" />
       </div>
 
       {/* Tap button */}
       <motion.button
         onClick={handleTap}
-        className="w-64 h-64 rounded-full bg-gradient-gold border-4 border-cali-gold shadow-2xl flex items-center justify-center"
+        className="w-64 h-64 rounded-full bg-gradient-magenta border-4 border-cali-magenta shadow-2xl flex items-center justify-center"
         whileTap={{ scale: 0.9 }}
         animate={showBeatPulse ? { scale: [1, 1.05, 1] } : {}}
         transition={{ duration: 0.1 }}
@@ -159,7 +159,7 @@ export default function RoundTapBeat({
           <motion.p
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-cali-gold text-lg font-bold mt-2"
+            className="text-cali-magenta text-lg font-bold mt-2"
           >
             ✨ Target reached!
           </motion.p>

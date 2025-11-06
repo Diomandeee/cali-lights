@@ -89,14 +89,14 @@ export default function RoundSaltLimeSip({
         return {
           emoji: "🥃",
           text: "Take the sip",
-          color: "text-cali-gold",
+          color: "text-cali-magenta",
           showButton: true,
         };
       case "complete":
         return {
           emoji: "✨",
           text: "¡Salud!",
-          color: "text-cali-gold",
+          color: "text-cali-magenta",
           showButton: false,
         };
     }
@@ -111,7 +111,7 @@ export default function RoundSaltLimeSip({
         <h2 className="text-2xl font-bold text-white mb-2">
           The Ritual
         </h2>
-        <p className="text-cali-gold text-lg">{formatTime(timeRemaining)}</p>
+        <p className="text-cali-magenta text-lg">{formatTime(timeRemaining)}</p>
       </div>
 
       {/* Main content */}
@@ -145,7 +145,7 @@ export default function RoundSaltLimeSip({
         {content.showButton && (
           <motion.button
             onClick={handleAction}
-            className="px-8 py-4 bg-cali-gold text-cali-black rounded-full text-xl font-bold"
+            className="px-8 py-4 bg-cali-magenta text-cali-black rounded-full text-xl font-bold"
             whileTap={{ scale: 0.95 }}
             whileHover={{ scale: 1.05 }}
             initial={{ opacity: 0, y: 20 }}
@@ -176,7 +176,7 @@ export default function RoundSaltLimeSip({
             <div
               key={s}
               className={`w-3 h-3 rounded-full transition-colors ${
-                isActive ? "bg-cali-gold" : "bg-gray-700"
+                isActive ? "bg-cali-magenta" : "bg-gray-700"
               }`}
             />
           );

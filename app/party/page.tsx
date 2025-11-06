@@ -83,7 +83,7 @@ export default function PartyPage() {
   if (isLoading || !userId) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-cali-black">
-        <div className="animate-shimmer text-cali-gold text-2xl">
+        <div className="animate-shimmer text-cali-magenta text-2xl">
           Loading...
         </div>
       </main>
@@ -118,7 +118,7 @@ export default function PartyPage() {
             <h2 className="text-3xl font-bold text-white">
               Welcome, {nickname}!
             </h2>
-            <p className="text-cali-gold text-lg">
+            <p className="text-cali-magenta text-lg">
               {participantCount} {participantCount === 1 ? "person" : "people"}{" "}
               in the party
             </p>

@@ -57,7 +57,7 @@ export default function RoundPalettePick({
         <p className="text-gray-400 text-sm mb-2">
           Which colors best match the night?
         </p>
-        <p className="text-cali-gold text-lg">{formatTime(timeRemaining)}</p>
+        <p className="text-cali-magenta text-lg">{formatTime(timeRemaining)}</p>
       </div>
 
       {/* Palette options */}
@@ -74,8 +74,8 @@ export default function RoundPalettePick({
               disabled={hasVoted}
               className={`relative p-6 rounded-2xl border-2 transition-all ${
                 isSelected
-                  ? "border-cali-gold scale-105"
-                  : "border-gray-700 hover:border-cali-green"
+                  ? "border-cali-magenta scale-105"
+                  : "border-gray-700 hover:border-cali-purple"
               } ${hasVoted && !isSelected ? "opacity-50" : ""}`}
               whileTap={!hasVoted ? { scale: 0.95 } : {}}
               whileHover={!hasVoted ? { scale: 1.02 } : {}}
@@ -103,7 +103,7 @@ export default function RoundPalettePick({
               {/* Name */}
               <p
                 className={`text-lg font-bold ${
-                  isSelected ? "text-cali-gold" : "text-white"
+                  isSelected ? "text-cali-magenta" : "text-white"
                 }`}
               >
                 {palette.name}
@@ -114,7 +114,7 @@ export default function RoundPalettePick({
                 <motion.div
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
-                  className="absolute top-4 right-4 w-8 h-8 bg-cali-gold rounded-full flex items-center justify-center text-cali-black text-xl"
+                  className="absolute top-4 right-4 w-8 h-8 bg-cali-magenta rounded-full flex items-center justify-center text-cali-black text-xl"
                 >
                   ✓
                 </motion.div>

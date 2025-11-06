@@ -61,9 +61,9 @@ export function SaltLimeSip({ onComplete }: SaltLimeSipProps) {
       case "lime":
         return "text-green-400";
       case "sip":
-        return "text-cali-gold";
+        return "text-cali-magenta";
       case "complete":
-        return "text-cali-gold";
+        return "text-cali-magenta";
     }
   };
 
@@ -97,7 +97,7 @@ export function SaltLimeSip({ onComplete }: SaltLimeSipProps) {
           {stage !== "complete" && (
             <motion.button
               onClick={handleAction}
-              className="px-8 py-4 bg-cali-gold text-cali-black rounded-full text-xl font-bold"
+              className="px-8 py-4 bg-cali-magenta text-cali-black rounded-full text-xl font-bold"
               whileTap={{ scale: 0.95 }}
               whileHover={{ scale: 1.05 }}
             >

@@ -32,7 +32,7 @@ export default function Recap({ sessionId }: RecapProps) {
   if (isLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-cali-black">
-        <div className="animate-shimmer text-cali-gold text-2xl">
+        <div className="animate-shimmer text-cali-magenta text-2xl">
           Generating recap...
         </div>
       </div>
@@ -70,7 +70,7 @@ export default function Recap({ sessionId }: RecapProps) {
           >
             🌟
           </motion.div>
-          <h1 className="text-5xl font-bold text-cali-gold text-glow">
+          <h1 className="text-5xl font-bold text-cali-magenta text-glow">
             That Was Magic
           </h1>
           <p className="text-white text-xl">
@@ -83,12 +83,12 @@ export default function Recap({ sessionId }: RecapProps) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="bg-cali-green/20 border-2 border-cali-green rounded-2xl p-8 text-center"
+          className="bg-cali-purple/20 border-2 border-cali-purple rounded-2xl p-8 text-center"
         >
           <p className="text-gray-400 text-sm uppercase tracking-wider mb-2">
             Final Score
           </p>
-          <p className="text-6xl font-bold text-cali-gold">
+          <p className="text-6xl font-bold text-cali-magenta">
             {recap.final_score}
           </p>
           <p className="text-white text-sm mt-2">
@@ -105,7 +105,7 @@ export default function Recap({ sessionId }: RecapProps) {
             className="space-y-4"
           >
             <h2 className="text-2xl font-bold text-white">Your Palette</h2>
-            <div className="bg-cali-green/20 border-2 border-cali-green rounded-2xl p-6">
+            <div className="bg-cali-purple/20 border-2 border-cali-purple rounded-2xl p-6">
               <div
                 className="w-full h-32 rounded-xl mb-4"
                 style={{ background: palette.gradient }}
@@ -126,7 +126,7 @@ export default function Recap({ sessionId }: RecapProps) {
             className="space-y-4"
           >
             <h2 className="text-2xl font-bold text-white">Collective Toast</h2>
-            <div className="bg-cali-green/20 border-2 border-cali-green rounded-2xl p-8">
+            <div className="bg-cali-purple/20 border-2 border-cali-purple rounded-2xl p-8">
               <p className="text-white text-lg leading-relaxed italic">
                 "{recap.toast}"
               </p>
@@ -146,7 +146,7 @@ export default function Recap({ sessionId }: RecapProps) {
               href={recap.playlist_url}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-block px-8 py-4 bg-cali-gold text-cali-black font-bold text-lg rounded-full hover:scale-105 transition-transform"
+              className="inline-block px-8 py-4 bg-cali-magenta text-cali-black font-bold text-lg rounded-full hover:scale-105 transition-transform"
             >
               🎵 Listen to the Playlist
             </a>
@@ -158,12 +158,12 @@ export default function Recap({ sessionId }: RecapProps) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1.5 }}
-          className="text-center pt-12 border-t border-cali-green/30"
+          className="text-center pt-12 border-t border-cali-purple/30"
         >
           <p className="text-gray-400 text-sm">
             This memory will live on in Solo Mode
           </p>
-          <p className="text-cali-gold text-xs mt-2">
+          <p className="text-cali-magenta text-xs mt-2">
             ✨ Cali Lights · {new Date().toLocaleDateString()}
           </p>
         </motion.div>

@@ -128,7 +128,7 @@ export function CaliLightsViz({
       <div className="absolute bottom-8 left-8 right-8">
         <div className="h-1 bg-gray-800 rounded-full overflow-hidden">
           <motion.div
-            className="h-full bg-cali-gold"
+            className="h-full bg-cali-magenta"
             initial={{ width: "0%" }}
             animate={{ width: "100%" }}
             transition={{ duration, ease: "linear" }}

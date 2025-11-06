@@ -111,14 +111,14 @@ export default function AdminPage() {
       <div className="max-w-4xl mx-auto space-y-8">
         {/* Header */}
         <div className="text-center space-y-4">
-          <h1 className="text-4xl font-bold text-cali-gold text-glow">
+          <h1 className="text-4xl font-bold text-cali-magenta text-glow">
             Cali Lights Admin
           </h1>
           <p className="text-gray-400">Control panel for QR mode and sessions</p>
         </div>
 
         {/* Mode Toggle */}
-        <div className="bg-cali-green/20 border-2 border-cali-green rounded-2xl p-6 space-y-4">
+        <div className="bg-cali-purple/20 border-2 border-cali-purple rounded-2xl p-6 space-y-4">
           <h2 className="text-2xl font-bold text-white mb-4">Current Mode</h2>
 
           <div className="grid grid-cols-2 gap-4">
@@ -127,8 +127,8 @@ export default function AdminPage() {
               disabled={isLoading || currentMode === "solo"}
               className={`p-6 rounded-xl border-2 transition-all ${
                 currentMode === "solo"
-                  ? "border-cali-gold bg-cali-gold/20"
-                  : "border-gray-700 hover:border-cali-green"
+                  ? "border-cali-magenta bg-cali-magenta/20"
+                  : "border-gray-700 hover:border-cali-purple"
               }`}
               whileTap={{ scale: 0.98 }}
             >
@@ -144,8 +144,8 @@ export default function AdminPage() {
               disabled={isLoading || currentMode === "party"}
               className={`p-6 rounded-xl border-2 transition-all ${
                 currentMode === "party"
-                  ? "border-cali-gold bg-cali-gold/20"
-                  : "border-gray-700 hover:border-cali-green"
+                  ? "border-cali-magenta bg-cali-magenta/20"
+                  : "border-gray-700 hover:border-cali-purple"
               }`}
               whileTap={{ scale: 0.98 }}
             >
@@ -160,10 +160,10 @@ export default function AdminPage() {
 
         {/* Party Controls */}
         {currentMode === "party" && sessionId && (
-          <div className="bg-cali-green/20 border-2 border-cali-green rounded-2xl p-6 space-y-6">
+          <div className="bg-cali-purple/20 border-2 border-cali-purple rounded-2xl p-6 space-y-6">
             <div className="flex justify-between items-center">
               <h2 className="text-2xl font-bold text-white">Party Controls</h2>
-              <div className="text-cali-gold text-sm">
+              <div className="text-cali-magenta text-sm">
                 Session: {sessionId.slice(0, 8)}...
               </div>
             </div>
@@ -193,7 +193,7 @@ export default function AdminPage() {
                     key={roundNum}
                     onClick={() => handleStartRound(roundNum)}
                     disabled={isLoading}
-                    className="px-4 py-3 bg-cali-gold text-cali-black font-bold rounded-lg hover:bg-cali-gold/80 disabled:opacity-50"
+                    className="px-4 py-3 bg-cali-magenta text-cali-black font-bold rounded-lg hover:bg-cali-magenta/80 disabled:opacity-50"
                   >
                     Round {roundNum}
                   </button>
@@ -213,7 +213,7 @@ export default function AdminPage() {
         )}
 
         {/* QR Code Display */}
-        <div className="bg-cali-green/20 border-2 border-cali-green rounded-2xl p-6 space-y-4">
+        <div className="bg-cali-purple/20 border-2 border-cali-purple rounded-2xl p-6 space-y-4">
           <h2 className="text-2xl font-bold text-white">QR Code</h2>
           <div className="bg-white p-8 rounded-xl flex items-center justify-center">
             <div className="text-center">
