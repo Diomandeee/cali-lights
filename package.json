@@ -19,7 +19,9 @@
     "ably": "^2.0.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
-    "tailwind-merge": "^2.2.0"
+    "tailwind-merge": "^2.2.0",
+    "cloudinary": "^2.0.0",
+    "exif-parser": "^0.1.12"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",
