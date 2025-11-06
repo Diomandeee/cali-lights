@@ -161,25 +161,25 @@ export function completeLevel(levelId: number): void {
 
 // Color palette utilities
 export const CALI_PALETTES = {
-  gold: {
-    name: "Golden Hour",
-    colors: ["#DB962C", "#F5C042", "#FFDA6A", "#FFF4D6"],
-    gradient: "linear-gradient(135deg, #DB962C 0%, #FFDA6A 100%)",
+  magenta: {
+    name: "Magenta Dreams",
+    colors: ["#E91E8C", "#F72585", "#FF006E", "#FF4D94"],
+    gradient: "linear-gradient(135deg, #E91E8C 0%, #FF006E 100%)",
   },
-  green: {
-    name: "Forest Night",
-    colors: ["#44553B", "#5A6D4E", "#708562", "#869D76"],
-    gradient: "linear-gradient(135deg, #44553B 0%, #708562 100%)",
+  purple: {
+    name: "Purple Haze",
+    colors: ["#A855F7", "#9333EA", "#7E22CE", "#6B21A8"],
+    gradient: "linear-gradient(135deg, #A855F7 0%, #6B21A8 100%)",
   },
   mixed: {
     name: "Cali Lights",
-    colors: ["#DB962C", "#44553B", "#F5C042", "#5A6D4E"],
-    gradient: "linear-gradient(135deg, #DB962C 0%, #44553B 50%, #F5C042 100%)",
+    colors: ["#E91E8C", "#A855F7", "#EC4899", "#C026D3"],
+    gradient: "linear-gradient(135deg, #E91E8C 0%, #A855F7 50%, #EC4899 100%)",
   },
   venue: {
     name: "That Night",
-    colors: ["#DB962C", "#111111", "#44553B", "#FFFFFF"],
-    gradient: "linear-gradient(135deg, #DB962C 0%, #111111 50%, #44553B 100%)",
+    colors: ["#E91E8C", "#A855F7", "#1E0B2E", "#EC4899"],
+    gradient: "linear-gradient(135deg, #E91E8C 0%, #A855F7 50%, #EC4899 100%)",
   },
 };
 

@@ -14,7 +14,7 @@ The experience lives behind a single dynamic QR code that can switch between mod
 ## Features
 
 - 🎭 **Dual Modes**: Solo memory levels and multiplayer party games
-- 🎨 **Custom Visual Identity**: Gold (#DB962C), Green (#44553B), Black (#111111)
+- 🎨 **Custom Visual Identity**: Magenta (#E91E8C), Purple (#A855F7), Pink (#EC4899)
 - ⚡ **Real-time Multiplayer**: Using Ably for WebSocket connections
 - 💾 **Persistent Storage**: Vercel KV + Postgres for data
 - 📱 **Mobile-First**: Touch gestures, haptic feedback
@@ -232,9 +232,11 @@ Edit `tailwind.config.ts` to change the color palette:
 ```typescript
 colors: {
   cali: {
-    gold: "#DB962C",
-    green: "#44553B",
-    black: "#111111",
+    magenta: "#E91E8C",
+    purple: "#A855F7",
+    pink: "#EC4899",
+    black: "#0A0A0A",
+    darkPurple: "#1E0B2E",
   },
 }
 ```

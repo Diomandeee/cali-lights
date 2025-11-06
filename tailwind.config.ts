@@ -10,9 +10,11 @@ const config: Config = {
     extend: {
       colors: {
         cali: {
-          gold: "#DB962C",
-          green: "#44553B",
-          black: "#111111",
+          magenta: "#E91E8C",
+          purple: "#A855F7",
+          pink: "#EC4899",
+          black: "#0A0A0A",
+          darkPurple: "#1E0B2E",
         },
       },
       animation: {

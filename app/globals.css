@@ -3,9 +3,11 @@
 @tailwind utilities;
 
 :root {
-  --cali-gold: #DB962C;
-  --cali-green: #44553B;
-  --cali-black: #111111;
+  --cali-magenta: #E91E8C;
+  --cali-purple: #A855F7;
+  --cali-pink: #EC4899;
+  --cali-black: #0A0A0A;
+  --cali-dark-purple: #1E0B2E;
 }
 
 @layer base {
@@ -20,12 +22,16 @@
 }
 
 @layer utilities {
-  .gradient-gold {
-    background: linear-gradient(135deg, var(--cali-gold) 0%, rgba(219, 150, 44, 0.6) 100%);
+  .gradient-magenta {
+    background: linear-gradient(135deg, var(--cali-magenta) 0%, var(--cali-pink) 100%);
   }
 
-  .gradient-green {
-    background: linear-gradient(135deg, var(--cali-green) 0%, rgba(68, 85, 59, 0.6) 100%);
+  .gradient-purple {
+    background: linear-gradient(135deg, var(--cali-purple) 0%, var(--cali-magenta) 100%);
+  }
+
+  .gradient-venue {
+    background: linear-gradient(135deg, var(--cali-magenta) 0%, var(--cali-purple) 50%, var(--cali-pink) 100%);
   }
 
   .shimmer {
@@ -33,7 +39,7 @@
   }
 
   .text-glow {
-    text-shadow: 0 0 20px rgba(219, 150, 44, 0.5);
+    text-shadow: 0 0 20px rgba(233, 30, 140, 0.6), 0 0 40px rgba(168, 85, 247, 0.3);
   }
 
   .tap-active {

@@ -16,7 +16,7 @@
           "animation": "fadeIn"
         },
         {
-          "text": "Just good food, good people.",
+          "text": "Just good food, good people, good vibes.",
           "duration": 3000,
           "animation": "fadeIn"
         },
@@ -106,10 +106,11 @@
   ],
   "birthday_unlock": {
     "gate": "levels_completed>=3",
-    "date": "2025-12-31",
-    "message": "I owe you a round where the lights are even better.",
+    "date": "2025-11-06",
+    "expire_date": "2025-11-07",
+    "message": "Happy Birthday Alize! Tonight we celebrate you under lights even more magical.",
     "cta": {
-      "label": "See the invite",
+      "label": "See Your Surprise",
       "href": "/invite"
     }
   }
