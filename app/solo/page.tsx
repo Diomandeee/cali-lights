@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import type { SoloConfig, SoloLevel, SoloStep } from "@/lib/types";
@@ -9,7 +9,7 @@ import { getAudioManager } from "@/lib/audio";
 import { SaltLimeSip } from "./components/SaltLimeSip";
 import { CaliLightsViz } from "./components/CaliLightsViz";
 
-export default function SoloPage() {
+function SoloPageContent() {
   const searchParams = useSearchParams();
   const configId = searchParams.get("cfg") || "solo.v1";
 
@@ -178,5 +178,19 @@ export default function SoloPage() {
         ))}
       </div>
     </main>
+  );
+}
+
+export default function SoloPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex min-h-screen items-center justify-center bg-cali-black">
+        <div className="animate-shimmer text-cali-magenta text-2xl">
+          Loading...
+        </div>
+      </div>
+    }>
+      <SoloPageContent />
+    </Suspense>
   );
 }

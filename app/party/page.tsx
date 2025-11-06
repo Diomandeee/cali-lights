@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import type { PartyConfig, SessionState } from "@/lib/types";
@@ -14,7 +14,7 @@ import RoundFragments from "./components/RoundFragments";
 import Unlock from "./components/Unlock";
 import Recap from "./components/Recap";
 
-export default function PartyPage() {
+function PartyPageContent() {
   const searchParams = useSearchParams();
   const sessionId = searchParams.get("sid") || generateId("session");
 
@@ -191,5 +191,19 @@ export default function PartyPage() {
       )}
       {renderContent()}
     </main>
+  );
+}
+
+export default function PartyPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex min-h-screen items-center justify-center bg-cali-black">
+        <div className="animate-shimmer text-cali-magenta text-2xl">
+          Loading...
+        </div>
+      </div>
+    }>
+      <PartyPageContent />
+    </Suspense>
   );
 }
