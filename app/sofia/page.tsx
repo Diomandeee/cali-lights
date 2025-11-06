@@ -85,17 +85,17 @@ export default function SofiaPage() {
             Sofia
           </motion.h1>
 
-          {/* Decorative hearts */}
+          {/* Decorative icon */}
           <motion.div
             initial={{ scale: 0 }}
-            animate={{ scale: 1, rotate: [0, 10, -10, 0] }}
+            animate={{ scale: 1, rotate: [0, 5, -5, 0] }}
             transition={{
               scale: { delay: 0.5, type: "spring", stiffness: 200 },
-              rotate: { duration: 2, repeat: Infinity }
+              rotate: { duration: 1.5, repeat: Infinity }
             }}
             className="text-6xl"
           >
-            💖
+            💃
           </motion.div>
 
           {/* Message */}
@@ -118,16 +118,12 @@ export default function SofiaPage() {
 
               {/* Text box */}
               <div className="relative bg-gradient-to-br from-cali-magenta/20 to-cali-purple/20 rounded-3xl p-8 md:p-12 border-2 border-cali-purple/30 backdrop-blur-sm">
-                <p className="text-2xl md:text-3xl text-white leading-relaxed font-light mb-6">
-                  Your strength isn't loud.{" "}
-                  <span className="font-bold text-cali-magenta">It doesn't need to be</span>.
-                </p>
-                <p className="text-xl md:text-2xl text-white/80 leading-relaxed font-light mb-6">
-                  You show up. You stay consistent.{" "}
-                  <span className="font-bold text-cali-purple">You don't quit</span>.
-                </p>
-                <p className="text-xl md:text-2xl text-white/80 leading-relaxed font-light">
-                  That quiet power? It moves mountains. ⚡
+                <p className="text-3xl md:text-5xl text-white leading-relaxed font-light text-center">
+                  Let's{" "}
+                  <span className="font-black text-transparent bg-gradient-to-r from-cali-magenta to-cali-purple bg-clip-text">
+                    Dance Dance Revolution
+                  </span>{" "}
+                  tonight! 🕺✨
                 </p>
               </div>
             </div>
