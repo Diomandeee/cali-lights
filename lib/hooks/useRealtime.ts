@@ -7,6 +7,7 @@ import { RealtimeEventType } from "@/lib/realtime";
 
 interface UseRealtimeReturn {
   isConnected: boolean;
+  isAvailable: boolean;
   sessionState: SessionState | null;
   roundState: RoundState | null;
   participantCount: number;
@@ -18,18 +19,27 @@ export function useRealtime(
   userId: string
 ): UseRealtimeReturn {
   const [isConnected, setIsConnected] = useState(false);
+  const [isAvailable, setIsAvailable] = useState(true);
   const [sessionState, setSessionState] = useState<SessionState | null>(null);
   const [roundState, setRoundState] = useState<RoundState | null>(null);
   const [participantCount, setParticipantCount] = useState(0);
 
   const ablyRef = useRef<Ably.Realtime | null>(null);
-  const channelRef = useRef<Ably.Types.RealtimeChannelCallbacks | null>(null);
+  const channelRef = useRef<ReturnType<Ably.Realtime['channels']['get']> | null>(null);
 
   useEffect(() => {
     let mounted = true;
 
     async function connect() {
       try {
+        // Skip realtime if Ably is not configured
+        if (!process.env.NEXT_PUBLIC_ABLY_CLIENT_ID) {
+          console.log("Realtime disabled - Ably not configured");
+          setIsConnected(false);
+          setIsAvailable(false);
+          return;
+        }
+
         // Get auth token from server
         const response = await fetch("/api/realtime/auth", {
           method: "POST",
@@ -37,7 +47,12 @@ export function useRealtime(
           body: JSON.stringify({ userId }),
         });
 
-        if (!response.ok) throw new Error("Failed to get auth token");
+        if (!response.ok) {
+          console.warn("Realtime auth failed, continuing without realtime");
+          setIsConnected(false);
+          setIsAvailable(false);
+          return;
+        }
 
         const { token } = await response.json();
 
@@ -84,11 +99,11 @@ export function useRealtime(
             case RealtimeEventType.PARTICIPANT_JOIN:
             case RealtimeEventType.PARTICIPANT_LEAVE:
               // Update participant count via presence
-              channel.presence.get((err, members) => {
-                if (!err && members) {
+              channel.presence.get().then((members) => {
+                if (members) {
                   setParticipantCount(members.length);
                 }
-              });
+              }).catch(err => console.warn("Failed to get presence:", err));
               break;
           }
         });
@@ -97,20 +112,23 @@ export function useRealtime(
         await channel.presence.enter();
 
         // Get initial presence count
-        channel.presence.get((err, members) => {
-          if (!err && members && mounted) {
+        try {
+          const members = await channel.presence.get();
+          if (members && mounted) {
             setParticipantCount(members.length);
           }
-        });
+        } catch (err) {
+          console.warn("Failed to get initial presence:", err);
+        }
 
         // Monitor presence changes
         channel.presence.subscribe((presenceMsg) => {
           if (!mounted) return;
-          channel.presence.get((err, members) => {
-            if (!err && members) {
+          channel.presence.get().then((members) => {
+            if (members) {
               setParticipantCount(members.length);
             }
-          });
+          }).catch(err => console.warn("Failed to get presence on change:", err));
         });
 
         client.connection.on("connected", () => {
@@ -121,7 +139,9 @@ export function useRealtime(
           if (mounted) setIsConnected(false);
         });
       } catch (error) {
-        console.error("Realtime connection error:", error);
+        console.warn("Realtime disabled:", error);
+        setIsConnected(false);
+        setIsAvailable(false);
       }
     }
 
@@ -150,6 +170,7 @@ export function useRealtime(
 
   return {
     isConnected,
+    isAvailable,
     sessionState,
     roundState,
     participantCount,

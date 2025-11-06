@@ -1,12 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import {
-  createUser,
-  createSession,
-  getSession,
-  addParticipant,
-} from "@/lib/db";
-import { addPresence } from "@/lib/kv";
-import { publishParticipantJoin } from "@/lib/realtime";
 
 export async function POST(request: NextRequest) {
   try {
@@ -19,30 +11,29 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create or get user
-    const user = await createUser(nickname, instagram);
+    // Simplified mock response for development
+    // In production, this would connect to database
+    const mockUser = {
+      id: userId,
+      nickname,
+      instagram,
+      created_at: new Date(),
+    };
 
-    // Create or get session
-    let session = await getSession(sessionId);
-    if (!session) {
-      session = await createSession("party", user.id);
-    }
-
-    // Add participant
-    const isHost = session.host_id === user.id;
-    await addParticipant(sessionId, user.id, isHost);
-
-    // Add to presence
-    await addPresence(sessionId, user.id, nickname);
-
-    // Publish join event
-    await publishParticipantJoin(sessionId, user.id, nickname);
+    const mockSession = {
+      id: sessionId,
+      mode: "party" as const,
+      state: "lobby" as const,
+      host_id: userId,
+      score: 0,
+      created_at: new Date(),
+    };
 
     return NextResponse.json({
       success: true,
-      session,
-      user,
-      isHost,
+      session: mockSession,
+      user: mockUser,
+      isHost: true,
     });
   } catch (error) {
     console.error("Session join error:", error);

@@ -202,7 +202,7 @@ export async function preloadAudio(): Promise<void> {
   const manager = getAudioManager();
 
   // Add your audio files here
-  const sounds = [
+  const sounds: Array<{ id: string; url: string }> = [
     // { id: "ambient", url: "/media/ambient.mp3" },
     // { id: "tap", url: "/media/sfx/tap.mp3" },
     // { id: "success", url: "/media/sfx/success.mp3" },

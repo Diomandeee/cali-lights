@@ -2,10 +2,16 @@ import { NextRequest, NextResponse } from "next/server";
 import { updateSessionState } from "@/lib/db";
 import { setActiveRound } from "@/lib/kv";
 import { publishRoundStart } from "@/lib/realtime";
-import type { RoundType } from "@/lib/types";
+import type { RoundType, PartyConfig } from "@/lib/types";
+import { readFileSync } from "fs";
+import { join } from "path";
 
-// Load party config
-import partyConfig from "@/config/party.v1.json";
+// Load party config from public directory
+function getPartyConfig(): PartyConfig {
+  const configPath = join(process.cwd(), "public", "config", "party.v1.json");
+  const configData = readFileSync(configPath, "utf-8");
+  return JSON.parse(configData);
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -17,6 +23,8 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
+
+    const partyConfig = getPartyConfig();
 
     if (roundNumber < 1 || roundNumber > partyConfig.rounds.length) {
       return NextResponse.json(

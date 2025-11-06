@@ -24,7 +24,7 @@ export default function PartyPage() {
   const [hasJoined, setHasJoined] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  const { isConnected, sessionState, roundState, participantCount, publish } =
+  const { isConnected, isAvailable, sessionState, roundState, participantCount, publish } =
     useRealtime(sessionId, userId);
 
   // Load config
@@ -184,7 +184,7 @@ export default function PartyPage() {
 
   return (
     <main className="min-h-screen bg-cali-black">
-      {!isConnected && (
+      {isAvailable && !isConnected && (
         <div className="fixed top-4 right-4 px-4 py-2 bg-red-500 text-white rounded-full text-sm">
           Reconnecting...
         </div>

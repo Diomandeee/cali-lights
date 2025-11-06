@@ -14,7 +14,7 @@ export function getAblyServerClient() {
 // Generate auth token for client (server-side)
 export async function generateAblyToken(
   clientId: string
-): Promise<Ably.Types.TokenDetails> {
+): Promise<any> {
   const client = getAblyServerClient();
   const tokenRequest = await client.auth.createTokenRequest({
     clientId,
@@ -22,7 +22,7 @@ export async function generateAblyToken(
       "*": ["subscribe", "publish", "presence"],
     },
   });
-  return tokenRequest as Ably.Types.TokenDetails;
+  return tokenRequest;
 }
 
 // Channel naming

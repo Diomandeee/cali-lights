@@ -10,6 +10,7 @@ export default function AddMemoryPage() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string>("");
   const [isUploading, setIsUploading] = useState(false);
+  const [captureMode, setCaptureMode] = useState<"upload" | "camera">("upload");
   const [location, setLocation] = useState<{
     name: string;
     latitude: number | null;
@@ -91,30 +92,24 @@ export default function AddMemoryPage() {
     setIsUploading(true);
 
     try {
-      // Upload to Cloudinary
-      const uploadFormData = new FormData();
-      uploadFormData.append("file", selectedFile);
+      // Import cloudinary utilities
+      const { uploadToCloudinary, saveMemoryToLocalStorage } = await import("@/lib/cloudinary");
 
-      const metadata = {
-        title: formData.title,
-        date: formData.date,
-        time: formData.time,
-        location: location.name,
-        latitude: location.latitude?.toString(),
-        longitude: location.longitude?.toString(),
-      };
-      uploadFormData.append("metadata", JSON.stringify(metadata));
-
-      const uploadResponse = await fetch("/api/upload", {
-        method: "POST",
-        body: uploadFormData,
+      // Upload directly to Cloudinary (no server-side auth required)
+      const uploadResult = await uploadToCloudinary(selectedFile, {
+        folder: "cali-lights",
+        context: {
+          title: formData.title,
+          date: formData.date,
+          time: formData.time,
+          location: location.name,
+          latitude: location.latitude?.toString() || "",
+          longitude: location.longitude?.toString() || "",
+        },
+        tags: formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag),
       });
 
-      if (!uploadResponse.ok) {
-        throw new Error("Upload failed");
-      }
-
-      const { url } = await uploadResponse.json();
+      const url = uploadResult.secure_url;
 
       // Parse tags
       const tagArray = formData.tags
@@ -139,24 +134,36 @@ export default function AddMemoryPage() {
         longitude: location.longitude,
       };
 
-      // In production, this would POST to an API to update memories.json
-      // For now, show instructions
-      console.log("New memory to add:", newMemory);
+      // Save to localStorage for immediate viewing
+      saveMemoryToLocalStorage(newMemory);
+      console.log("New memory saved to localStorage:", newMemory);
 
       alert(
         `Photo Uploaded Successfully! ✨\n\n` +
         `Cloudinary URL: ${url}\n\n` +
-        `To save permanently:\n` +
+        `Memory saved locally. To save permanently:\n` +
         `1. Open public/config/memories.json\n` +
         `2. Add this to the "memories" array:\n\n` +
-        `${JSON.stringify(newMemory, null, 2)}\n\n` +
-        `Or refresh the page to see it temporarily!`
+        `${JSON.stringify(newMemory, null, 2)}`
       );
 
       router.push("/memories");
-    } catch (error) {
+    } catch (error: any) {
       console.error("Upload error:", error);
-      alert("Failed to upload photo. Please try again.");
+
+      let errorMessage = "Failed to upload photo. Please try again.";
+
+      if (error.message?.includes("signature")) {
+        errorMessage =
+          "⚠️ Cloudinary not configured!\n\n" +
+          "Make sure these are in your .env file:\n\n" +
+          "CLOUDINARY_CLOUD_NAME\n" +
+          "CLOUDINARY_API_KEY\n" +
+          "CLOUDINARY_API_SECRET\n\n" +
+          "Then restart your dev server.";
+      }
+
+      alert(errorMessage);
     } finally {
       setIsUploading(false);
     }
@@ -189,31 +196,81 @@ export default function AddMemoryPage() {
       </div>
 
       <div className="max-w-2xl mx-auto p-4 pb-20">
-        {/* Photo Upload */}
+        {/* Capture Mode Selector */}
+        <div className="mb-4 flex gap-2 p-1 bg-cali-purple/10 rounded-lg">
+          <button
+            onClick={() => setCaptureMode("upload")}
+            className={`flex-1 py-3 rounded-lg font-semibold transition-all ${
+              captureMode === "upload"
+                ? "bg-cali-magenta text-white shadow-lg"
+                : "text-gray-400 hover:text-white"
+            }`}
+          >
+            📂 Choose Photo
+          </button>
+          <button
+            onClick={() => setCaptureMode("camera")}
+            className={`flex-1 py-3 rounded-lg font-semibold transition-all ${
+              captureMode === "camera"
+                ? "bg-cali-magenta text-white shadow-lg"
+                : "text-gray-400 hover:text-white"
+            }`}
+          >
+            📷 Take Photo
+          </button>
+        </div>
+
+        {/* Photo Capture/Upload */}
         <div className="mb-6">
           <label
-            htmlFor="photo-upload"
-            className="block w-full aspect-square bg-cali-purple/10 rounded-lg border-2 border-dashed border-cali-purple/30 cursor-pointer overflow-hidden hover:border-cali-magenta/50 transition-colors"
+            htmlFor="photo-input"
+            className="block w-full aspect-square bg-cali-purple/10 rounded-lg border-2 border-dashed border-cali-purple/30 cursor-pointer overflow-hidden hover:border-cali-magenta/50 transition-colors active:scale-[0.98]"
           >
             {previewUrl ? (
-              <img
-                src={previewUrl}
-                alt="Preview"
-                className="w-full h-full object-cover"
-              />
+              <div className="relative w-full h-full">
+                <img
+                  src={previewUrl}
+                  alt="Preview"
+                  className="w-full h-full object-cover"
+                />
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setSelectedFile(null);
+                    setPreviewUrl("");
+                  }}
+                  className="absolute top-2 right-2 w-8 h-8 bg-black/70 rounded-full flex items-center justify-center text-white hover:bg-black transition-colors"
+                >
+                  ×
+                </button>
+              </div>
             ) : (
-              <div className="flex flex-col items-center justify-center h-full text-gray-500">
-                <svg className="w-16 h-16 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                </svg>
-                <p className="text-lg">Tap to add photo</p>
+              <div className="flex flex-col items-center justify-center h-full text-gray-400">
+                {captureMode === "camera" ? (
+                  <>
+                    <svg className="w-20 h-20 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    <p className="text-lg font-medium">Tap to take photo</p>
+                    <p className="text-sm mt-2">Use your camera</p>
+                  </>
+                ) : (
+                  <>
+                    <svg className="w-20 h-20 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <p className="text-lg font-medium">Tap to choose photo</p>
+                    <p className="text-sm mt-2">From your gallery</p>
+                  </>
+                )}
               </div>
             )}
             <input
-              id="photo-upload"
+              id="photo-input"
               type="file"
               accept="image/*"
-              capture="environment"
+              capture={captureMode === "camera" ? "environment" : undefined}
               onChange={handleFileSelect}
               className="hidden"
             />

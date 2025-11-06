@@ -141,6 +141,28 @@ export default function Home() {
               📸 View Memories
             </motion.a>
           </div>
+
+          {/* Secret Oracle Link */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 2 }}
+            className="mt-8"
+          >
+            <motion.a
+              href="/oracle"
+              className="group inline-flex items-center gap-2 text-cali-purple/60 hover:text-cali-magenta transition-colors text-sm"
+              whileHover={{ scale: 1.05 }}
+            >
+              <motion.span
+                animate={{ rotate: 360 }}
+                transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+              >
+                🔮
+              </motion.span>
+              <span className="group-hover:underline">What does the oracle say?</span>
+            </motion.a>
+          </motion.div>
         </motion.div>
 
         {/* Decorative sparkles */}

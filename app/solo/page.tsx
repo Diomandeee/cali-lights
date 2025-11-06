@@ -112,13 +112,17 @@ export default function SoloPage() {
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="text-center space-y-6"
+          className="text-center space-y-6 max-w-xl"
         >
-          <h2 className="text-3xl font-bold text-cali-magenta text-glow">
-            Level Complete
-          </h2>
-          <p className="text-white text-lg">
-            Come back later for the next chapter.
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{ duration: 2, ease: "linear" }}
+            className="text-6xl mb-4"
+          >
+            ✨
+          </motion.div>
+          <p className="text-white text-2xl md:text-3xl leading-relaxed font-light">
+            Keep dreaming. Keep believing. Keep exploring.
           </p>
         </motion.div>
       </main>

@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import type { RoundState, PartyRound, PaletteKey } from "@/lib/types";
+import type { RoundState, PartyRound } from "@/lib/types";
 import { triggerHaptic, formatTime, CALI_PALETTES, getPalette } from "@/lib/utils";
+import type { PaletteKey } from "@/lib/utils";
 
 interface RoundPalettePickProps {
   roundState: RoundState;
