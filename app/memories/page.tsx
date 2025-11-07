@@ -185,7 +185,8 @@ export default function MemoriesPage() {
 
             <Link
               href="/memories/add"
-              className="px-4 py-2 bg-cali-magenta text-white rounded-full text-sm font-semibold hover:scale-105 transition-transform"
+              className="px-4 py-2 bg-cali-magenta text-white rounded-full text-sm font-semibold hover:scale-105 transition-transform active:scale-95 cursor-pointer"
+              onClick={() => console.log("Add button clicked")}
             >
               + Add
             </Link>
@@ -411,7 +412,8 @@ export default function MemoriesPage() {
             <p className="text-gray-400 text-xl mb-6">No photos yet</p>
             <Link
               href="/memories/add"
-              className="inline-block px-8 py-4 bg-gradient-to-r from-cali-magenta to-cali-purple text-white rounded-full font-semibold hover:scale-105 transition-transform"
+              className="inline-block px-8 py-4 bg-gradient-to-r from-cali-magenta to-cali-purple text-white rounded-full font-semibold hover:scale-105 transition-transform active:scale-95 cursor-pointer"
+              onClick={() => console.log("Add Your First Photo clicked")}
             >
               Add Your First Photo
             </Link>

@@ -72,20 +72,44 @@ export default function AddMemoryPage() {
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
+    console.log("File selected:", file);
     if (file) {
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        alert('Please select an image file');
+        return;
+      }
+
+      // Validate file size (max 10MB)
+      if (file.size > 10 * 1024 * 1024) {
+        alert('File size must be less than 10MB');
+        return;
+      }
+
       setSelectedFile(file);
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreviewUrl(reader.result as string);
       };
+      reader.onerror = () => {
+        alert('Failed to read file');
+      };
       reader.readAsDataURL(file);
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (e?: React.FormEvent | React.MouseEvent) => {
+    if (e) {
+      e.preventDefault();
+    }
+
     if (!selectedFile) {
       alert("Please select a photo");
+      return;
+    }
+
+    if (!formData.title.trim()) {
+      alert("Please add a title for your memory");
       return;
     }
 
@@ -161,6 +185,8 @@ export default function AddMemoryPage() {
           "CLOUDINARY_API_KEY\n" +
           "CLOUDINARY_API_SECRET\n\n" +
           "Then restart your dev server.";
+      } else if (error.message) {
+        errorMessage = `Upload failed: ${error.message}`;
       }
 
       alert(errorMessage);
@@ -186,9 +212,13 @@ export default function AddMemoryPage() {
           </h1>
 
           <button
-            onClick={handleSubmit}
+            type="button"
+            onClick={(e) => {
+              console.log("Done button clicked");
+              handleSubmit(e);
+            }}
             disabled={isUploading || !selectedFile}
-            className="text-cali-magenta hover:text-cali-purple font-semibold disabled:opacity-30 disabled:cursor-not-allowed"
+            className="text-cali-magenta hover:text-cali-purple font-semibold disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
           >
             {isUploading ? "Uploading..." : "Done"}
           </button>
@@ -199,7 +229,11 @@ export default function AddMemoryPage() {
         {/* Capture Mode Selector */}
         <div className="mb-4 flex gap-2 p-1 bg-cali-purple/10 rounded-lg">
           <button
-            onClick={() => setCaptureMode("upload")}
+            type="button"
+            onClick={() => {
+              console.log("Switching to upload mode");
+              setCaptureMode("upload");
+            }}
             className={`flex-1 py-3 rounded-lg font-semibold transition-all ${
               captureMode === "upload"
                 ? "bg-cali-magenta text-white shadow-lg"
@@ -209,7 +243,11 @@ export default function AddMemoryPage() {
             📂 Choose Photo
           </button>
           <button
-            onClick={() => setCaptureMode("camera")}
+            type="button"
+            onClick={() => {
+              console.log("Switching to camera mode");
+              setCaptureMode("camera");
+            }}
             className={`flex-1 py-3 rounded-lg font-semibold transition-all ${
               captureMode === "camera"
                 ? "bg-cali-magenta text-white shadow-lg"
@@ -225,6 +263,9 @@ export default function AddMemoryPage() {
           <label
             htmlFor="photo-input"
             className="block w-full aspect-square bg-cali-purple/10 rounded-lg border-2 border-dashed border-cali-purple/30 cursor-pointer overflow-hidden hover:border-cali-magenta/50 transition-colors active:scale-[0.98]"
+            onClick={(e) => {
+              console.log("Label clicked, mode:", captureMode);
+            }}
           >
             {previewUrl ? (
               <div className="relative w-full h-full">
@@ -234,18 +275,21 @@ export default function AddMemoryPage() {
                   className="w-full h-full object-cover"
                 />
                 <button
+                  type="button"
                   onClick={(e) => {
                     e.preventDefault();
+                    e.stopPropagation();
+                    console.log("Removing preview");
                     setSelectedFile(null);
                     setPreviewUrl("");
                   }}
-                  className="absolute top-2 right-2 w-8 h-8 bg-black/70 rounded-full flex items-center justify-center text-white hover:bg-black transition-colors"
+                  className="absolute top-2 right-2 w-8 h-8 bg-black/70 rounded-full flex items-center justify-center text-white hover:bg-black transition-colors z-10"
                 >
                   ×
                 </button>
               </div>
             ) : (
-              <div className="flex flex-col items-center justify-center h-full text-gray-400">
+              <div className="flex flex-col items-center justify-center h-full text-gray-400 pointer-events-none">
                 {captureMode === "camera" ? (
                   <>
                     <svg className="w-20 h-20 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -266,15 +310,18 @@ export default function AddMemoryPage() {
                 )}
               </div>
             )}
-            <input
-              id="photo-input"
-              type="file"
-              accept="image/*"
-              capture={captureMode === "camera" ? "environment" : undefined}
-              onChange={handleFileSelect}
-              className="hidden"
-            />
           </label>
+          <input
+            id="photo-input"
+            type="file"
+            accept="image/*"
+            capture={captureMode === "camera" ? "environment" : undefined}
+            onChange={handleFileSelect}
+            className="hidden"
+            onClick={(e) => {
+              console.log("File input clicked");
+            }}
+          />
         </div>
 
         {/* Auto-captured metadata */}
