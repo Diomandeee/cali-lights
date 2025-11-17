@@ -1,20 +1,12 @@
 {
-  "buildCommand": "npm run build",
-  "framework": "nextjs",
-  "regions": ["iad1"],
-  "headers": [
+  "crons": [
     {
-      "source": "/(.*)",
-      "headers": [
-        {
-          "key": "X-Frame-Options",
-          "value": "SAMEORIGIN"
-        },
-        {
-          "key": "X-Content-Type-Options",
-          "value": "nosniff"
-        }
-      ]
+      "path": "/api/video/poll",
+      "schedule": "*/2 * * * *"
+    },
+    {
+      "path": "/api/admin/schedule/check",
+      "schedule": "0 * * * *"
     }
   ]
 }

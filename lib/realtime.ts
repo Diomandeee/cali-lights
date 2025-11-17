@@ -6,7 +6,17 @@ import type { RealtimeEvent, SessionState, RoundState } from "./types";
 // Initialize Ably client (server-side)
 export function getAblyServerClient() {
   if (!process.env.ABLY_API_KEY) {
-    throw new Error("ABLY_API_KEY is not configured");
+    // Return a mock client that does nothing
+    return {
+      channels: {
+        get: () => ({
+          publish: async () => {},
+        }),
+      },
+      auth: {
+        createTokenRequest: async () => ({}),
+      },
+    } as any;
   }
   return new Ably.Rest({ key: process.env.ABLY_API_KEY });
 }
@@ -29,6 +39,7 @@ export async function generateAblyToken(
 export const getSessionChannel = (sessionId: string) => `session:${sessionId}`;
 export const getRoundChannel = (sessionId: string, roundId: string) =>
   `session:${sessionId}:round:${roundId}`;
+export const getMissionChannel = (missionId: string) => `mission:${missionId}`;
 
 // Event types
 export enum RealtimeEventType {
@@ -51,6 +62,12 @@ export enum RealtimeEventType {
   // Unlock events
   UNLOCK_TRIGGERED = "unlock:triggered",
   RECAP_READY = "recap:ready",
+}
+
+export enum MissionRealtimeEvent {
+  STATE = "mission:state",
+  PROGRESS = "mission:progress",
+  CHAPTER_READY = "mission:chapter",
 }
 
 // Publish helpers (server-side)
@@ -142,6 +159,63 @@ export async function publishRecapReady(
     data: { recapId },
     timestamp: Date.now(),
   });
+}
+
+// Mission channels
+async function publishMissionEvent(
+  missionId: string,
+  name: MissionRealtimeEvent,
+  data: any
+) {
+  try {
+    const client = getAblyServerClient();
+    const channel = client.channels.get(getMissionChannel(missionId));
+    await channel.publish(name, data);
+  } catch (error) {
+    console.warn("Failed to publish mission event (Ably may not be configured):", error);
+  }
+}
+
+export async function publishMissionState(
+  missionId: string,
+  state: string
+) {
+  await publishMissionEvent(missionId, MissionRealtimeEvent.STATE, {
+    state,
+    timestamp: Date.now(),
+  });
+}
+
+export async function publishMissionProgress(params: {
+  missionId: string;
+  submissionsReceived: number;
+  submissionsRequired: number;
+  entryUserId?: string;
+}) {
+  await publishMissionEvent(
+    params.missionId,
+    MissionRealtimeEvent.PROGRESS,
+    {
+      submissionsReceived: params.submissionsReceived,
+      submissionsRequired: params.submissionsRequired,
+      entryUserId: params.entryUserId,
+      timestamp: Date.now(),
+    }
+  );
+}
+
+export async function publishMissionChapterReady(
+  missionId: string,
+  chapterId: string
+) {
+  await publishMissionEvent(
+    missionId,
+    MissionRealtimeEvent.CHAPTER_READY,
+    {
+      chapterId,
+      timestamp: Date.now(),
+    }
+  );
 }
 
 // Client-side hook helper types (to be used in React components)

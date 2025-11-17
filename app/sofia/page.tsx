@@ -4,6 +4,15 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 
+// Birthday message - special for today!
+const birthdayMessage = {
+  day: "Birthday",
+  title: "🎉 Happy Birthday, Sofia! 🎉",
+  message: "Today is all about you! Celebrate every moment, dance like nobody's watching, and shine brighter than ever. You bring so much light and joy to everyone around you. Here's to another amazing year of being absolutely incredible! 🎂✨💃",
+  emoji: "🎂",
+  gradient: "from-yellow-400 via-pink-500 to-purple-600"
+};
+
 // Daily messages - one for each day of the week (0 = Sunday, 6 = Saturday)
 const dailyMessages = [
   {
@@ -58,14 +67,25 @@ const dailyMessages = [
 ];
 
 export default function SofiaPage() {
+  // Check if today is Sofia's birthday (November 17th)
+  // Note: getMonth() returns 0-11, so November is 10
+  const checkBirthday = () => {
+    const today = new Date();
+    return today.getMonth() === 10 && today.getDate() === 17;
+  };
+  
+  const [isBirthday, setIsBirthday] = useState(checkBirthday());
+  
   // Get the current day of the week (0 = Sunday, 6 = Saturday)
   const [dayOfWeek, setDayOfWeek] = useState(new Date().getDay());
-  const currentMessage = dailyMessages[dayOfWeek];
+  const currentMessage = isBirthday ? birthdayMessage : dailyMessages[dayOfWeek];
 
-  // Update day at midnight
+  // Update day at midnight and check birthday status
   useEffect(() => {
     const checkDay = () => {
-      setDayOfWeek(new Date().getDay());
+      const now = new Date();
+      setDayOfWeek(now.getDay());
+      setIsBirthday(checkBirthday());
     };
 
     // Check every minute if the day has changed
@@ -100,20 +120,21 @@ export default function SofiaPage() {
           />
         ))}
 
-        {/* Floating sparkles */}
-        {[...Array(20)].map((_, i) => (
+        {/* Floating sparkles - more on birthday! */}
+        {[...Array(isBirthday ? 50 : 20)].map((_, i) => (
           <motion.div
             key={`sparkle-${i}`}
             initial={{ opacity: 0, scale: 0 }}
             animate={{
               opacity: [0, 1, 0],
               scale: [0, 1, 0],
-              y: [0, -100]
+              y: [0, -100],
+              rotate: [0, 360]
             }}
             transition={{
               duration: 3,
               repeat: Infinity,
-              delay: i * 0.3,
+              delay: i * 0.1,
               ease: "easeOut"
             }}
             className="absolute text-2xl"
@@ -122,9 +143,43 @@ export default function SofiaPage() {
               top: `${Math.random() * 100}%`,
             }}
           >
-            ✨
+            {isBirthday ? ["🎉", "🎂", "✨", "🎈", "💖", "🌟"][i % 6] : "✨"}
           </motion.div>
         ))}
+
+        {/* Birthday confetti */}
+        {isBirthday && typeof window !== "undefined" && [...Array(30)].map((_, i) => {
+          const startX = Math.random() * 100;
+          const endX = startX + (Math.random() - 0.5) * 20;
+          return (
+            <motion.div
+              key={`confetti-${i}`}
+              initial={{ 
+                opacity: 0, 
+                x: 0,
+                y: -50,
+                rotate: 0
+              }}
+              animate={{
+                opacity: [0, 1, 1, 0],
+                y: "100vh",
+                x: `${endX - startX}vw`,
+                rotate: 360
+              }}
+              transition={{
+                duration: 3 + Math.random() * 2,
+                repeat: Infinity,
+                delay: Math.random() * 2,
+                ease: "linear"
+              }}
+              className="absolute w-3 h-3 rounded"
+              style={{
+                background: ["#FFD700", "#FF6B9D", "#C44569", "#F8B500", "#FF1744", "#E91E63"][i % 6],
+                left: `${startX}%`,
+              }}
+            />
+          );
+        })}
       </div>
 
       <div className="relative z-10 max-w-4xl mx-auto px-4 py-12 min-h-screen flex flex-col">
@@ -134,24 +189,40 @@ export default function SofiaPage() {
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-12"
         >
+          {isBirthday && (
+            <motion.div
+              initial={{ scale: 0, rotate: -180 }}
+              animate={{ scale: 1, rotate: 0 }}
+              transition={{ type: "spring", stiffness: 200, delay: 0.2 }}
+              className="text-6xl mb-4"
+            >
+              🎉🎂🎉
+            </motion.div>
+          )}
           <motion.h1
             className="text-5xl md:text-7xl font-black mb-4"
             animate={{
               backgroundPosition: ["0%", "100%"],
+              scale: isBirthday ? [1, 1.05, 1] : 1
             }}
-            transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
+            transition={{ 
+              backgroundPosition: { duration: 5, repeat: Infinity, ease: "linear" },
+              scale: isBirthday ? { duration: 2, repeat: Infinity } : {}
+            }}
             style={{
-              backgroundImage: "linear-gradient(90deg, #E91E8C, #A855F7, #EC4899, #E91E8C)",
+              backgroundImage: isBirthday 
+                ? "linear-gradient(90deg, #FFD700, #FF6B9D, #C44569, #F8B500, #FF1744, #FFD700)"
+                : "linear-gradient(90deg, #E91E8C, #A855F7, #EC4899, #E91E8C)",
               backgroundSize: "200% 100%",
               WebkitBackgroundClip: "text",
               backgroundClip: "text",
               color: "transparent"
             }}
           >
-            For Sofia
+            {isBirthday ? "Happy Birthday, Sofia!" : "For Sofia"}
           </motion.h1>
           <p className="text-gray-400 text-lg mb-2">
-            Your daily inspiration 💃
+            {isBirthday ? "Today is your special day! 🎈✨" : "Your daily inspiration 💃"}
           </p>
           <motion.p
             initial={{ opacity: 0 }}
@@ -165,7 +236,7 @@ export default function SofiaPage() {
 
         {/* Dynamic Message Card */}
         <motion.div
-          key={dayOfWeek}
+          key={`${isBirthday ? 'birthday' : dayOfWeek}`}
           initial={{ opacity: 0, scale: 0.9, rotateY: -20 }}
           animate={{ opacity: 1, scale: 1, rotateY: 0 }}
           transition={{ duration: 0.6, type: "spring" }}
@@ -183,11 +254,30 @@ export default function SofiaPage() {
             />
 
             {/* Card */}
-            <div className={`relative bg-gradient-to-br ${currentMessage.gradient} rounded-3xl p-8 md:p-12 shadow-2xl border-4 border-white/20`}>
+            <div className={`relative bg-gradient-to-br ${currentMessage.gradient} rounded-3xl p-8 md:p-12 shadow-2xl border-4 ${isBirthday ? "border-yellow-400/50" : "border-white/20"}`}>
+              {isBirthday && (
+                <motion.div
+                  animate={{ rotate: [0, 360] }}
+                  transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                  className="absolute -top-8 -right-8 text-6xl"
+                >
+                  🎈
+                </motion.div>
+              )}
               <motion.div
                 initial={{ scale: 0 }}
-                animate={{ scale: 1, rotate: [0, 10, 0] }}
-                transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+                animate={{ 
+                  scale: 1, 
+                  rotate: isBirthday ? [0, 10, -10, 0] : [0, 10, 0],
+                  y: isBirthday ? [0, -10, 0] : 0
+                }}
+                transition={{ 
+                  delay: 0.2, 
+                  type: "spring", 
+                  stiffness: 200,
+                  rotate: isBirthday ? { duration: 2, repeat: Infinity } : {},
+                  y: isBirthday ? { duration: 1.5, repeat: Infinity } : {}
+                }}
                 className="text-7xl mb-6 text-center"
               >
                 {currentMessage.emoji}
@@ -225,6 +315,16 @@ export default function SofiaPage() {
             Explore More
           </h3>
           <div className="flex flex-wrap gap-4 justify-center">
+            {isBirthday && (
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 1, type: "spring" }}
+                className="px-6 py-3 bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-600 text-white rounded-full font-bold text-lg border-2 border-yellow-300 shadow-2xl"
+              >
+                🎂 It's Your Birthday! 🎉
+              </motion.div>
+            )}
             <Link
               href="/memories"
               className="px-6 py-3 bg-cali-purple/30 hover:bg-cali-purple/50 text-white rounded-full border border-cali-purple transition-all hover:scale-105"

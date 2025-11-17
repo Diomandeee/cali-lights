@@ -1,0 +1,950 @@
+openapi: 3.0.3
+info:
+  title: Cali Lights API
+  version: "1.0.0"
+  description: >
+    Networked Triad Mission platform: chains, invites, missions, gallery, metadata analysis,
+    Veo video generation, and invite/bridge flows. Every endpoint maps directly to checklist B.
+servers:
+  - url: https://api.cali-lights.example
+tags:
+  - name: Chains
+  - name: Invites
+  - name: Missions
+  - name: Entries
+  - name: Gallery
+  - name: Chapters
+  - name: Video
+  - name: Admin
+  - name: Search
+security:
+  - bearerAuth: []
+paths:
+  /api/chain/create:
+    post:
+      tags: [Chains]
+      summary: Create a new chain
+      operationId: createChain
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name: { type: string, minLength: 1 }
+                color_theme:
+                  type: object
+                  additionalProperties: true
+                  description: Arbitrary color + motion tokens used in Orbit map styling.
+              required: [name]
+      responses:
+        "200":
+          description: Chain created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Chain'
+        "401": { $ref: '#/components/responses/Unauthorized' }
+        "422": { $ref: '#/components/responses/UnprocessableEntity' }
+
+  /api/invite/create:
+    post:
+      tags: [Invites]
+      summary: Generate an invite token and QR for a chain
+      operationId: createInvite
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                chainId: { type: string, format: uuid }
+                expiresInHours: { type: integer, minimum: 1, maximum: 168, default: 72 }
+              required: [chainId]
+      responses:
+        "200":
+          description: Invite created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  invite: { $ref: '#/components/schemas/Invite' }
+        "401": { $ref: '#/components/responses/Unauthorized' }
+        "404": { $ref: '#/components/responses/NotFound' }
+
+  /api/invite/accept:
+    post:
+      tags: [Invites]
+      summary: Accept an invite token and join a chain
+      operationId: acceptInvite
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token: { type: string }
+                displayName: { type: string }
+                avatarUrl: { type: string, format: uri, nullable: true }
+              required: [token]
+      responses:
+        "200":
+          description: Membership created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  membership: { $ref: '#/components/schemas/Membership' }
+                  chain: { $ref: '#/components/schemas/Chain' }
+        "400": { $ref: '#/components/responses/BadRequest' }
+        "404": { $ref: '#/components/responses/NotFound' }
+
+  /api/network:
+    get:
+      tags: [Chains]
+      summary: Get connected chains & bridge data for the current user
+      operationId: getNetwork
+      responses:
+        "200":
+          description: Network graph
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  chains:
+                    type: array
+                    items: { $ref: '#/components/schemas/Chain' }
+                  connections:
+                    type: array
+                    items: { $ref: '#/components/schemas/Connection' }
+                  bridgeEvents:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        connectionId: { type: string, format: uuid }
+                        triggerHueDelta: { type: integer }
+                        sharedTags:
+                          type: array
+                          items: { type: string }
+                        createdAt: { type: string, format: date-time }
+        "401": { $ref: '#/components/responses/Unauthorized' }
+
+  /api/gallery/media:
+    get:
+      tags: [Gallery]
+      summary: Paginated media entries with filters
+      operationId: listMedia
+      parameters:
+        - $ref: '#/components/parameters/ScopeParam'
+        - $ref: '#/components/parameters/ChainIdParam'
+        - $ref: '#/components/parameters/UserIdParam'
+        - in: query
+          name: missionId
+          schema: { type: string, format: uuid }
+        - in: query
+          name: prompt
+          schema: { type: string }
+        - in: query
+          name: paletteBucket
+          schema:
+            type: string
+            description: 12-step hue bucket label (e.g., warm, cool, dusk).
+        - in: query
+          name: tags
+          schema: { type: string, description: "Comma-separated scene/object tags" }
+        - in: query
+          name: favoriteOnly
+          schema: { type: boolean, default: false }
+        - in: query
+          name: sort
+          schema:
+            type: string
+            enum: [newest, oldest, warm_to_cool, cool_to_warm, sync]
+            default: newest
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/PageSizeParam'
+      responses:
+        "200":
+          description: Paginated media entries
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items: { $ref: '#/components/schemas/Entry' }
+                  page: { type: integer }
+                  pageSize: { type: integer }
+                  total: { type: integer }
+        "401": { $ref: '#/components/responses/Unauthorized' }
+
+  /api/gallery/chapters:
+    get:
+      tags: [Gallery]
+      summary: Paginated chapters with filters
+      operationId: listChapters
+      parameters:
+        - $ref: '#/components/parameters/ScopeParam'
+        - $ref: '#/components/parameters/ChainIdParam'
+        - in: query
+          name: paletteBucket
+          schema: { type: string }
+        - in: query
+          name: fromDate
+          schema: { type: string, format: date }
+        - in: query
+          name: toDate
+          schema: { type: string, format: date }
+        - in: query
+          name: shareable
+          schema: { type: boolean }
+        - in: query
+          name: sort
+          schema:
+            type: string
+            enum: [newest, oldest, streak, warm_to_cool]
+            default: newest
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/PageSizeParam'
+      responses:
+        "200":
+          description: Paginated chapters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items: { $ref: '#/components/schemas/Chapter' }
+                  page: { type: integer }
+                  pageSize: { type: integer }
+                  total: { type: integer }
+        "401": { $ref: '#/components/responses/Unauthorized' }
+
+  /api/search:
+    get:
+      tags: [Search]
+      summary: Semantic search across entries, chapters, and chains
+      operationId: searchContent
+      parameters:
+        - in: query
+          name: q
+          required: true
+          schema: { type: string, minLength: 2 }
+        - in: query
+          name: scope
+          schema:
+            type: string
+            enum: [entries, chapters, chains, all]
+            default: all
+        - in: query
+          name: hue
+          schema: { type: integer, minimum: 0, maximum: 359 }
+        - in: query
+          name: limit
+          schema: { type: integer, minimum: 1, maximum: 50, default: 10 }
+      responses:
+        "200":
+          description: Search results
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items: { $ref: '#/components/schemas/SearchResult' }
+        "401": { $ref: '#/components/responses/Unauthorized' }
+
+  /api/mission/start:
+    post:
+      tags: [Missions]
+      summary: Start a mission for a chain
+      operationId: startMission
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                chainId: { type: string, format: uuid }
+                prompt: { type: string }
+                windowSeconds: { type: integer, minimum: 300 }
+                startsAt: { type: string, format: date-time, nullable: true }
+              required: [chainId, prompt, windowSeconds]
+      responses:
+        "200":
+          description: Mission started
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Mission' }
+        "401": { $ref: '#/components/responses/Unauthorized' }
+        "409": { $ref: '#/components/responses/Conflict' }
+
+  /api/mission/join:
+    post:
+      tags: [Missions]
+      summary: Join the active mission lobby and receive upload credentials
+      operationId: joinMission
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                missionId: { type: string, format: uuid }
+              required: [missionId]
+      responses:
+        "200":
+          description: Lobby join successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  mission: { $ref: '#/components/schemas/Mission' }
+                  upload:
+                    type: object
+                    properties:
+                      url: { type: string, format: uri }
+                      fields:
+                        type: object
+                        additionalProperties: { type: string }
+                      expiresAt: { type: string, format: date-time }
+                  presence:
+                    type: array
+                    items: { $ref: '#/components/schemas/MissionPresence' }
+        "401": { $ref: '#/components/responses/Unauthorized' }
+        "404": { $ref: '#/components/responses/NotFound' }
+
+  /api/mission/lock:
+    post:
+      tags: [Missions]
+      summary: Transition a mission into FUSING state when capture window closes
+      operationId: lockMission
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                missionId: { type: string, format: uuid }
+                reason: { type: string, enum: [timer, full, manual], default: timer }
+              required: [missionId]
+      responses:
+        "200":
+          description: Mission locked for fusing
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Mission' }
+        "401": { $ref: '#/components/responses/Unauthorized' }
+
+  /api/mission/recap:
+    post:
+      tags: [Missions]
+      summary: Run recap pipeline, kicking off metadata blending and Veo request
+      operationId: recapMission
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                missionId: { type: string, format: uuid }
+                force: { type: boolean, default: false }
+              required: [missionId]
+      responses:
+        "200":
+          description: Recap pipeline started
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  chapter: { $ref: '#/components/schemas/Chapter' }
+                  videoOperation: { $ref: '#/components/schemas/VideoOperation' }
+        "401": { $ref: '#/components/responses/Unauthorized' }
+        "409": { $ref: '#/components/responses/Conflict' }
+
+  /api/mission/archive:
+    post:
+      tags: [Missions]
+      summary: Archive a mission after recap and update streaks
+      operationId: archiveMission
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                missionId: { type: string, format: uuid }
+                publishAt: { type: string, format: date-time, nullable: true }
+              required: [missionId]
+      responses:
+        "200":
+          description: Mission archived
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  chapter: { $ref: '#/components/schemas/Chapter' }
+                  streaks:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        userId: { type: string, format: uuid }
+                        currentStreak: { type: integer }
+                        longestStreak: { type: integer }
+        "401": { $ref: '#/components/responses/Unauthorized' }
+
+  /api/mission/propagate:
+    post:
+      tags: [Missions]
+      summary: Propagate a prompt to connected chains
+      operationId: propagateMission
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                originChainId: { type: string, format: uuid }
+                prompt: { type: string }
+                missionId: { type: string, format: uuid, nullable: true }
+              required: [originChainId, prompt]
+      responses:
+        "200":
+          description: Propagation result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  chainsUpdated: { type: integer }
+                  missionIds:
+                    type: array
+                    items: { type: string, format: uuid }
+        "401": { $ref: '#/components/responses/Unauthorized' }
+
+  /api/admin/schedule:
+    post:
+      tags: [Admin]
+      summary: Configure automatic daily missions
+      operationId: scheduleMissions
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/MissionScheduleRequest' }
+      responses:
+        "200":
+          description: Schedule saved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  nextRunAt: { type: string, format: date-time }
+        "401": { $ref: '#/components/responses/Unauthorized' }
+        "403": { $ref: '#/components/responses/Forbidden' }
+
+  /api/entry/commit:
+    post:
+      tags: [Entries]
+      summary: Submit media for a mission and trigger metadata analysis
+      operationId: commitEntry
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                missionId: { type: string, format: uuid }
+                mediaUrl: { type: string, format: uri }
+                mediaType: { type: string, enum: [photo, video] }
+                gpsCity: { type: string }
+                capturedAt: { type: string, format: date-time, nullable: true }
+                altText: { type: string, nullable: true }
+              required: [missionId, mediaUrl, mediaType]
+      responses:
+        "200":
+          description: Entry stored
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Entry' }
+        "401": { $ref: '#/components/responses/Unauthorized' }
+        "409": { $ref: '#/components/responses/Conflict' }
+
+  /api/entry/favorite:
+    post:
+      tags: [Entries]
+      summary: Mark or unmark an entry as favorite
+      operationId: favoriteEntry
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FavoriteToggleRequest'
+      responses:
+        "200":
+          description: Favorite status updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  entryId: { type: string, format: uuid }
+                  favorite: { type: boolean }
+        "401": { $ref: '#/components/responses/Unauthorized' }
+        "404": { $ref: '#/components/responses/NotFound' }
+
+  /api/metadata/analyse:
+    post:
+      tags: [Entries]
+      summary: Analyse media and extract metadata
+      operationId: analyseMetadata
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                entryId: { type: string, format: uuid }
+                mediaUrl: { type: string, format: uri }
+                mediaType: { type: string, enum: [photo, video] }
+                chainId: { type: string, format: uuid }
+                userId: { type: string, format: uuid }
+              required: [entryId, mediaUrl, mediaType, chainId, userId]
+      responses:
+        "200":
+          description: Metadata extracted
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/MetadataAnalysis' }
+        "401": { $ref: '#/components/responses/Unauthorized' }
+
+  /api/video/generate:
+    post:
+      tags: [Video]
+      summary: Generate a video via Veo for a chapter or invite
+      operationId: generateVideo
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VideoGenerateRequest'
+      responses:
+        "200":
+          description: Operation accepted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  operationId: { type: string }
+                  status: { type: string, enum: [PENDING, RUNNING] }
+        "401": { $ref: '#/components/responses/Unauthorized' }
+
+  /api/video/status:
+    get:
+      tags: [Video]
+      summary: Get status of a Veo generation operation
+      operationId: getVideoStatus
+      parameters:
+        - in: query
+          name: operationId
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Operation status
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/VideoStatus' }
+        "401": { $ref: '#/components/responses/Unauthorized' }
+        "404": { $ref: '#/components/responses/NotFound' }
+
+  /api/chapter/{chapterId}:
+    put:
+      tags: [Chapters]
+      summary: Update a chapter with video output and palette metadata
+      operationId: updateChapter
+      parameters:
+        - in: path
+          name: chapterId
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                videoUrl: { type: string, format: uri }
+                durationSeconds: { type: integer }
+                finalPalette:
+                  type: array
+                  items: { type: string }
+                poem: { type: string }
+                generatedAt: { type: string, format: date-time }
+                soundtrackUrl: { type: string, format: uri, nullable: true }
+              required: [videoUrl, durationSeconds, finalPalette]
+      responses:
+        "200":
+          description: Chapter updated
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Chapter' }
+        "401": { $ref: '#/components/responses/Unauthorized' }
+        "404": { $ref: '#/components/responses/NotFound' }
+
+  /api/chapter/share:
+    post:
+      tags: [Chapters]
+      summary: Toggle chapter shareability and issue signed URL
+      operationId: shareChapter
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                chapterId: { type: string, format: uuid }
+                on: { type: boolean }
+                expiresInHours: { type: integer, minimum: 1, maximum: 720, default: 72 }
+              required: [chapterId, on]
+      responses:
+        "200":
+          description: Share state
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  chapterId: { type: string, format: uuid }
+                  shareable: { type: boolean }
+                  shareUrl: { type: string, format: uri, nullable: true }
+                  expiresAt: { type: string, format: date-time, nullable: true }
+        "401": { $ref: '#/components/responses/Unauthorized' }
+        "404": { $ref: '#/components/responses/NotFound' }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    ScopeParam:
+      name: scope
+      in: query
+      schema: { type: string, enum: [chain, network, user], default: chain }
+    ChainIdParam:
+      name: chainId
+      in: query
+      schema: { type: string, format: uuid }
+    UserIdParam:
+      name: userId
+      in: query
+      schema: { type: string, format: uuid }
+    PageParam:
+      name: page
+      in: query
+      schema: { type: integer, minimum: 1, default: 1 }
+    PageSizeParam:
+      name: pageSize
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 100, default: 24 }
+
+  responses:
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ErrorResponse' }
+    Unauthorized:
+      description: Authentication required
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ErrorResponse' }
+    Forbidden:
+      description: Forbidden
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ErrorResponse' }
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ErrorResponse' }
+    Conflict:
+      description: Conflict with current state
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ErrorResponse' }
+    UnprocessableEntity:
+      description: Validation failed
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ErrorResponse' }
+
+  schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        error: { type: string }
+        message: { type: string }
+        details: { type: object, additionalProperties: true }
+
+    User:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        name: { type: string }
+        handle: { type: string }
+        avatarUrl: { type: string, format: uri, nullable: true }
+        joinedAt: { type: string, format: date-time }
+
+    Chain:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        name: { type: string }
+        createdBy: { type: string, format: uuid }
+        colorTheme:
+          type: object
+          additionalProperties: true
+        activeMissionId: { type: string, format: uuid, nullable: true }
+        streakDays: { type: integer, minimum: 0 }
+        isPublic: { type: boolean, default: false }
+        dominantHue: { type: integer, minimum: 0, maximum: 359, nullable: true }
+
+    Membership:
+      type: object
+      properties:
+        userId: { type: string, format: uuid }
+        chainId: { type: string, format: uuid }
+        role: { type: string, enum: [admin, member] }
+        joinedAt: { type: string, format: date-time }
+
+    Invite:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        chainId: { type: string, format: uuid }
+        token: { type: string }
+        inviteUrl: { type: string, format: uri }
+        qrSvgUrl: { type: string, format: uri }
+        expiresAt: { type: string, format: date-time }
+        acceptedAt: { type: string, format: date-time, nullable: true }
+        status: { type: string, enum: [pending, redeemed, expired] }
+        createdBy: { type: string, format: uuid }
+
+    Connection:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        fromChainId: { type: string, format: uuid }
+        toChainId: { type: string, format: uuid }
+        bridgeReason: { type: string }
+        sharedTags:
+          type: array
+          items: { type: string }
+        hueDelta: { type: integer, minimum: 0, maximum: 359 }
+        createdAt: { type: string, format: date-time }
+
+    Mission:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        chainId: { type: string, format: uuid }
+        prompt: { type: string }
+        windowSeconds: { type: integer }
+        startsAt: { type: string, format: date-time }
+        endsAt: { type: string, format: date-time }
+        state:
+          type: string
+          enum: [IDLE, LOBBY, CAPTURE, FUSING, RECAP, ARCHIVED]
+        submissionsRequired: { type: integer, default: 3 }
+        submissionsReceived: { type: integer, default: 0 }
+        presenceCount: { type: integer, default: 0 }
+
+    MissionPresence:
+      type: object
+      properties:
+        user: { $ref: '#/components/schemas/User' }
+        joinedAt: { type: string, format: date-time }
+        entrySubmitted: { type: boolean }
+
+    Entry:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        missionId: { type: string, format: uuid }
+        userId: { type: string, format: uuid }
+        mediaUrl: { type: string, format: uri }
+        mediaType: { type: string, enum: [photo, video] }
+        gpsCity: { type: string, nullable: true }
+        capturedAt: { type: string, format: date-time, nullable: true }
+        dominantHue: { type: integer, minimum: 0, maximum: 359, nullable: true }
+        palette:
+          type: array
+          items: { type: string }
+        sceneTags:
+          type: array
+          items: { type: string }
+        objectTags:
+          type: array
+          items: { type: string }
+        motionScore: { type: number, format: float, nullable: true }
+        favorite: { type: boolean, default: false }
+        altText: { type: string, nullable: true }
+        createdAt: { type: string, format: date-time }
+
+    Chapter:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        missionId: { type: string, format: uuid }
+        title: { type: string }
+        poem: { type: string }
+        collageUrl: { type: string, format: uri, nullable: true }
+        videoUrl: { type: string, format: uri, nullable: true }
+        soundtrackUrl: { type: string, format: uri, nullable: true }
+        durationSeconds: { type: integer, nullable: true }
+        generatedAt: { type: string, format: date-time, nullable: true }
+        finalPalette:
+          type: array
+          items: { type: string }
+        isShareable: { type: boolean, default: false }
+        shareUrl: { type: string, format: uri, nullable: true }
+        shareExpiresAt: { type: string, format: date-time, nullable: true }
+
+    MetadataAnalysis:
+      type: object
+      properties:
+        entryId: { type: string, format: uuid }
+        dominantHue: { type: integer }
+        palette:
+          type: array
+          items: { type: string }
+        sceneTags:
+          type: array
+          items: { type: string }
+        objectTags:
+          type: array
+          items: { type: string }
+        motionScore: { type: number }
+        gpsCity: { type: string }
+        analysisTimestamp: { type: string, format: date-time }
+
+    VideoGenerateRequest:
+      type: object
+      properties:
+        chapterId: { type: string, format: uuid, nullable: true }
+        inviteId: { type: string, format: uuid, nullable: true }
+        generationType:
+          type: string
+          enum: [chapter, invite, bridge]
+        inputMediaUrls:
+          type: array
+          items: { type: string, format: uri }
+          minItems: 1
+        prompt: { type: string }
+        aspectRatio: { type: string, enum: ["9:16", "16:9", "1:1"] }
+        lengthSeconds: { type: integer, minimum: 1, maximum: 20 }
+        model: { type: string, default: "veo-1.0" }
+        webhookUrl: { type: string, format: uri, nullable: true }
+      required: [generationType, inputMediaUrls, prompt, aspectRatio, lengthSeconds, model]
+
+    VideoStatus:
+      type: object
+      properties:
+        operationId: { type: string }
+        status: { type: string, enum: [PENDING, RUNNING, SUCCEEDED, FAILED] }
+        videoUrl: { type: string, format: uri, nullable: true }
+        durationSeconds: { type: integer, nullable: true }
+        watermark: { type: string, nullable: true }
+        costUsd: { type: number, format: float, nullable: true }
+        generatedAt: { type: string, format: date-time, nullable: true }
+        completedAt: { type: string, format: date-time, nullable: true }
+
+    VideoOperation:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        operationId: { type: string }
+        status: { type: string, enum: [PENDING, RUNNING, SUCCEEDED, FAILED] }
+        targetType: { type: string, enum: [chapter, invite, bridge] }
+        targetId: { type: string, format: uuid }
+        prompt: { type: string }
+        inputMediaUrls:
+          type: array
+          items: { type: string, format: uri }
+        aspectRatio: { type: string }
+        lengthSeconds: { type: integer }
+        model: { type: string }
+        costUsd: { type: number, nullable: true }
+        createdAt: { type: string, format: date-time }
+        completedAt: { type: string, format: date-time, nullable: true }
+
+    FavoriteToggleRequest:
+      type: object
+      properties:
+        entryId: { type: string, format: uuid }
+        on: { type: boolean }
+      required: [entryId, on]
+
+    SearchResult:
+      type: object
+      properties:
+        type: { type: string, enum: [entry, chapter, chain] }
+        score: { type: number }
+        excerpt: { type: string }
+        entry:
+          allOf:
+            - $ref: '#/components/schemas/Entry'
+          nullable: true
+        chapter:
+          allOf:
+            - $ref: '#/components/schemas/Chapter'
+          nullable: true
+        chain:
+          allOf:
+            - $ref: '#/components/schemas/Chain'
+          nullable: true
+
+    MissionScheduleRequest:
+      type: object
+      properties:
+        chainId: { type: string, format: uuid }
+        timezone: { type: string, example: "America/Los_Angeles" }
+        windowSeconds: { type: integer, minimum: 900 }
+        promptTemplate: { type: string, description: "e.g. Golden hour. Capture {light_adjective}." }
+        autoStartAt: { type: string, format: time }
+        enabled: { type: boolean }
+      required: [chainId, timezone, windowSeconds, promptTemplate, autoStartAt, enabled]

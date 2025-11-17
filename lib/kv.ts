@@ -142,3 +142,14 @@ export async function getTopScores(
   }
   return result;
 }
+
+// Mission scheduling
+const MISSION_SCHEDULE_KEY = (chainId: string) => `mission:schedule:${chainId}`;
+
+export async function setMissionSchedule(chainId: string, config: any) {
+  await kv.set(MISSION_SCHEDULE_KEY(chainId), config);
+}
+
+export async function getMissionSchedule(chainId: string) {
+  return kv.get(MISSION_SCHEDULE_KEY(chainId));
+}
