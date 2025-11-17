@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 interface Memory {
   id: number;
@@ -27,6 +28,7 @@ type GroupBy = "location" | "day" | "month" | "year";
 type SortBy = "newest" | "oldest";
 
 export default function MemoriesPage() {
+  const router = useRouter();
   const [memories, setMemories] = useState<Memory[]>([]);
   const [groupedByLocation, setGroupedByLocation] = useState<LocationGroup[]>([]);
   const [selectedPhoto, setSelectedPhoto] = useState<{ url: string; memory: Memory } | null>(null);
@@ -115,34 +117,38 @@ export default function MemoriesPage() {
   ).sort();
 
   // Filter memories
-  const filteredMemories = memories.filter((memory) => {
-    // Search query filter
-    if (searchQuery) {
-      const query = searchQuery.toLowerCase();
-      const matchesSearch =
-        memory.title.toLowerCase().includes(query) ||
-        memory.description?.toLowerCase().includes(query) ||
-        memory.location?.toLowerCase().includes(query);
-      if (!matchesSearch) return false;
-    }
+  const filteredMemories = useMemo(() => {
+    return memories.filter((memory) => {
+      // Search query filter
+      if (searchQuery) {
+        const query = searchQuery.toLowerCase();
+        const matchesSearch =
+          memory.title.toLowerCase().includes(query) ||
+          memory.description?.toLowerCase().includes(query) ||
+          memory.location?.toLowerCase().includes(query);
+        if (!matchesSearch) return false;
+      }
 
-    // Tag filter
-    if (selectedTags.length > 0) {
-      const hasTag = selectedTags.some((tag) =>
-        memory.tags?.includes(tag)
-      );
-      if (!hasTag) return false;
-    }
+      // Tag filter
+      if (selectedTags.length > 0) {
+        const hasTag = selectedTags.some((tag) =>
+          memory.tags?.includes(tag)
+        );
+        if (!hasTag) return false;
+      }
 
-    return true;
-  });
+      return true;
+    });
+  }, [memories, searchQuery, selectedTags]);
 
   // Sort memories
-  const sortedMemories = [...filteredMemories].sort((a, b) =>
-    sortBy === "newest"
-      ? b.timestamp - a.timestamp
-      : a.timestamp - b.timestamp
-  );
+  const sortedMemories = useMemo(() => {
+    return [...filteredMemories].sort((a, b) =>
+      sortBy === "newest"
+        ? b.timestamp - a.timestamp
+        : a.timestamp - b.timestamp
+    );
+  }, [filteredMemories, sortBy]);
 
   // Update grouped memories when filters change
   useEffect(() => {
@@ -183,13 +189,12 @@ export default function MemoriesPage() {
               Library
             </h1>
 
-            <Link
-              href="/memories/add"
+            <button
+              onClick={() => router.push("/memories/add")}
               className="px-4 py-2 bg-cali-magenta text-white rounded-full text-sm font-semibold hover:scale-105 transition-transform active:scale-95 cursor-pointer"
-              onClick={() => console.log("Add button clicked")}
             >
               + Add
-            </Link>
+            </button>
           </div>
 
           {/* Search Bar */}
@@ -410,13 +415,12 @@ export default function MemoriesPage() {
           >
             <div className="text-6xl mb-4">📸</div>
             <p className="text-gray-400 text-xl mb-6">No photos yet</p>
-            <Link
-              href="/memories/add"
-              className="inline-block px-8 py-4 bg-gradient-to-r from-cali-magenta to-cali-purple text-white rounded-full font-semibold hover:scale-105 transition-transform active:scale-95 cursor-pointer"
-              onClick={() => console.log("Add Your First Photo clicked")}
+            <button
+              onClick={() => router.push("/memories/add")}
+              className="px-8 py-4 bg-gradient-to-r from-cali-magenta to-cali-purple text-white rounded-full font-semibold hover:scale-105 transition-transform active:scale-95 cursor-pointer"
             >
               Add Your First Photo
-            </Link>
+            </button>
           </motion.div>
         )}
       </div>
