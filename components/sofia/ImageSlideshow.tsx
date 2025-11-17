@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 
+// Only include JPG files (HEIC files may not display in browsers)
 const SOFIA_IMAGES = [
   "/media/sfx/Sofia IMG/IMG_0004.JPG",
   "/media/sfx/Sofia IMG/IMG_0028.JPG",
@@ -14,7 +15,7 @@ const SOFIA_IMAGES = [
   "/media/sfx/Sofia IMG/IMG_3563.JPG",
   "/media/sfx/Sofia IMG/IMG_3564.JPG",
   "/media/sfx/Sofia IMG/IMG_3565.JPG",
-];
+].filter(img => img.toLowerCase().endsWith('.jpg') || img.toLowerCase().endsWith('.jpeg'));
 
 type ImageSlideshowProps = {
   autoPlay?: boolean;
