@@ -3,12 +3,13 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { ImageSlideshow } from "@/components/sofia/ImageSlideshow";
 
 // Birthday message - special for today!
 const birthdayMessage = {
   day: "Birthday",
   title: "🎉 Happy Birthday, Sofia! 🎉",
-  message: "Today is all about you! Celebrate every moment, dance like nobody's watching, and shine brighter than ever. You bring so much light and joy to everyone around you. Here's to another amazing year of being absolutely incredible! 🎂✨💃",
+  message: "Today is all about you! Dance like nobody's watching and shine brighter than ever. Here's to another amazing year! 🎂✨💃",
   emoji: "🎂",
   gradient: "from-yellow-400 via-pink-500 to-purple-600"
 };
@@ -302,6 +303,16 @@ export default function SofiaPage() {
               </motion.p>
             </div>
           </div>
+        </motion.div>
+
+        {/* Image Slideshow */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6 }}
+          className="mb-12"
+        >
+          <ImageSlideshow autoPlay={true} interval={4000} />
         </motion.div>
 
         {/* Explore Section */}
