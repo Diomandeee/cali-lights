@@ -97,6 +97,7 @@ export function CalendarSection() {
           <div className="p-4">
             <h4 className="text-white font-semibold">Oceana</h4>
             <p className="text-gray-400 text-sm">120 W 49th St, New York, NY 10020</p>
+            <p className="text-rose-300/70 text-sm mt-1">Seafood</p>
           </div>
         </div>
 
