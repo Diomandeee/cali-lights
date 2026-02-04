@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { HeartParticles } from "./components/HeartParticles";
 import { NarrativeSection } from "./components/NarrativeSection";
@@ -13,6 +13,7 @@ type Phase = "narrative" | "question" | "celebration" | "notSure";
 export default function ValentinePage() {
   const [phase, setPhase] = useState<Phase>("narrative");
   const [showCalendar, setShowCalendar] = useState(false);
+  const [key, setKey] = useState(0); // Key to force remount for restart
 
   const handleNarrativeComplete = useCallback(() => {
     setPhase("question");
@@ -41,6 +42,17 @@ export default function ValentinePage() {
     setPhase("notSure");
   }, []);
 
+  // Auto-restart from beginning after "not sure" message
+  useEffect(() => {
+    if (phase === "notSure") {
+      const timer = setTimeout(() => {
+        setKey((k) => k + 1); // Force remount
+        setPhase("narrative");
+      }, 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [phase]);
+
   return (
     <main className="min-h-screen bg-cali-black overflow-hidden relative">
       {/* Background particles */}
@@ -61,7 +73,7 @@ export default function ValentinePage() {
             {/* Narrative Phase */}
             {phase === "narrative" && (
               <motion.div
-                key="narrative"
+                key={`narrative-${key}`}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0, y: -20 }}
@@ -91,12 +103,14 @@ export default function ValentinePage() {
                 key="notSure"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
                 className="text-center max-w-md px-4"
               >
                 <motion.p
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
+                  transition={{ duration: 1 }}
                   className="text-2xl text-white/90 mb-4"
                 >
                   All good.
@@ -104,20 +118,11 @@ export default function ValentinePage() {
                 <motion.p
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  transition={{ delay: 0.3 }}
-                  className="text-lg text-gray-400 mb-8"
+                  transition={{ delay: 0.4, duration: 1 }}
+                  className="text-lg text-gray-400"
                 >
                   It was just on my mind.
                 </motion.p>
-                <motion.button
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.6 }}
-                  onClick={() => setPhase("question")}
-                  className="text-gray-500 hover:text-gray-300 text-sm transition-colors"
-                >
-                  go back
-                </motion.button>
               </motion.div>
             )}
 

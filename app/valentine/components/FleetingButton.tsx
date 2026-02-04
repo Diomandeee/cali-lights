@@ -126,7 +126,7 @@ export function FleetingButton({ onYes, onNotSure }: FleetingButtonProps) {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.5 }}
             onClick={handleNotSure}
-            className="px-4 py-2 text-gray-500 hover:text-gray-300 text-sm border border-gray-700/50 rounded-full hover:border-gray-600 transition-all"
+            className="px-5 py-2.5 bg-gray-700/80 text-gray-200 text-sm rounded-full hover:bg-gray-600/80 transition-all"
           >
             if you're not sure yet
           </motion.button>
