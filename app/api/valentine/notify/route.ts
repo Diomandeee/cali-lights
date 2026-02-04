@@ -6,11 +6,47 @@ const VALENTINE_NOTIFY_USER_ID = process.env.VALENTINE_NOTIFY_USER_ID;
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
 const NOTIFY_EMAIL = "diommoney@aol.com";
 
+// Generate ICS content for calendar invite
+function generateICS(): string {
+  const now = new Date().toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
+
+  return `BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Cali Lights//Valentine//EN
+METHOD:REQUEST
+BEGIN:VEVENT
+UID:valentine-2025-oceana@cali-lights
+DTSTAMP:${now}
+DTSTART;TZID=America/New_York:20250214T194500
+DTEND;TZID=America/New_York:20250214T220000
+SUMMARY:Valentine's Dinner at Oceana
+DESCRIPTION:Valentine's Day dinner reservation at Oceana. She said yes!
+LOCATION:Oceana, 120 W 49th St, New York, NY 10020
+STATUS:CONFIRMED
+ORGANIZER:mailto:${NOTIFY_EMAIL}
+ATTENDEE;RSVP=TRUE:mailto:${NOTIFY_EMAIL}
+BEGIN:VALARM
+TRIGGER:-PT1H
+ACTION:DISPLAY
+DESCRIPTION:Valentine's Dinner at Oceana in 1 hour
+END:VALARM
+BEGIN:VALARM
+TRIGGER:-P1D
+ACTION:DISPLAY
+DESCRIPTION:Valentine's Dinner at Oceana tomorrow
+END:VALARM
+END:VEVENT
+END:VCALENDAR`;
+}
+
 async function sendEmailNotification() {
   if (!RESEND_API_KEY) {
     console.warn("Resend API key missing - skipping email notification");
     return null;
   }
+
+  const icsContent = generateICS();
+  const icsBase64 = Buffer.from(icsContent).toString("base64");
 
   try {
     const response = await fetch("https://api.resend.com/emails", {
@@ -22,20 +58,33 @@ async function sendEmailNotification() {
       body: JSON.stringify({
         from: "Cali Lights <notifications@resend.dev>",
         to: NOTIFY_EMAIL,
-        subject: "She said YES!",
+        subject: "She said YES! - Valentine's Dinner at Oceana",
         html: `
           <div style="font-family: system-ui, sans-serif; max-width: 480px; margin: 0 auto; padding: 40px 20px;">
             <h1 style="color: #BE123C; margin-bottom: 16px;">She said YES!</h1>
             <p style="color: #374151; font-size: 18px; line-height: 1.6;">
               Alizé accepted your Valentine's invitation.
             </p>
-            <p style="color: #6B7280; font-size: 16px; margin-top: 24px;">
-              Valentine's Dinner at Oceana<br/>
-              Friday, February 14, 2025<br/>
-              7:45 PM
+            <div style="background: #F9FAFB; border-radius: 12px; padding: 20px; margin-top: 24px;">
+              <p style="color: #111827; font-weight: 600; margin: 0 0 8px 0;">Valentine's Dinner at Oceana</p>
+              <p style="color: #6B7280; font-size: 14px; margin: 0;">
+                Friday, February 14, 2025<br/>
+                7:45 PM<br/>
+                120 W 49th St, New York, NY 10020
+              </p>
+            </div>
+            <p style="color: #9CA3AF; font-size: 14px; margin-top: 24px;">
+              Calendar invite attached - it should add automatically to your calendar.
             </p>
           </div>
         `,
+        attachments: [
+          {
+            filename: "valentines-dinner.ics",
+            content: icsBase64,
+            content_type: "text/calendar; method=REQUEST",
+          },
+        ],
       }),
     });
 
