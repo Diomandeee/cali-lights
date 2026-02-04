@@ -16,6 +16,11 @@ const config: Config = {
           black: "#0A0A0A",
           darkPurple: "#1E0B2E",
         },
+        valentine: {
+          deepRose: "#BE123C",
+          softRose: "#FB7185",
+          blush: "#FDA4AF",
+        },
       },
       animation: {
         shimmer: "shimmer 2s ease-in-out infinite",

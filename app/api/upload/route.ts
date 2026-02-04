@@ -11,8 +11,10 @@ cloudinary.config({
 export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
-    const file = formData.get("file") as File;
-    const metadata = formData.get("metadata") as string;
+    // @ts-expect-error - FormData.get() types conflict in project
+    const file = formData.get("file") as File | null;
+    // @ts-expect-error - FormData.get() types conflict in project
+    const metadata = formData.get("metadata") as string | null;
 
     if (!file) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });

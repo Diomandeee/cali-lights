@@ -102,7 +102,6 @@ export function AuthForm() {
                 type="text"
                 value={handle}
                 onChange={(event) => setHandle(event.target.value)}
-                placeholder="alize"
                 className="mt-1 w-full rounded-2xl border border-white/10 bg-black/50 px-4 py-3 text-white focus:border-white focus:outline-none"
               />
             </label>

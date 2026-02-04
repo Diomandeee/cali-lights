@@ -220,7 +220,7 @@ export interface BeatCallback {
 export class BeatMetronome {
   private bpm: number;
   private callback: BeatCallback;
-  private intervalId: NodeJS.Timeout | null = null;
+  private intervalId: ReturnType<typeof setInterval> | null = null;
   private beatCount: number = 0;
 
   constructor(bpm: number, callback: BeatCallback) {
