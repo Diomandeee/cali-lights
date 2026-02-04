@@ -38,7 +38,28 @@ export function FleetingButton({ onYes, onNotSure }: FleetingButtonProps) {
 
   // Get random position - avoid the center where Yes button is
   const getRandomPosition = useCallback(() => {
-    // Define safe zones (corners and edges, away from center)
+    // Use smaller ranges for mobile to keep button on screen
+    const isMobileDevice = typeof window !== "undefined" && window.innerWidth < 768;
+
+    if (isMobileDevice) {
+      // Mobile: constrained positions that stay on screen
+      const positions = [
+        { x: -120, y: -180 },  // top left
+        { x: 120, y: -180 },   // top right
+        { x: -140, y: -80 },   // mid left
+        { x: 140, y: -80 },    // mid right
+        { x: -100, y: 100 },   // bottom left
+        { x: 100, y: 100 },    // bottom right
+        { x: 0, y: -200 },     // top center
+        { x: 0, y: 120 },      // bottom center
+      ];
+      const base = positions[Math.floor(Math.random() * positions.length)];
+      const x = base.x + (Math.random() - 0.5) * 40;
+      const y = base.y + (Math.random() - 0.5) * 30;
+      return { x, y };
+    }
+
+    // Desktop: larger movement range
     const positions = [
       { x: -300, y: -150 },  // top left
       { x: 300, y: -150 },   // top right
