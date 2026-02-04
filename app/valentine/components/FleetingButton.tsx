@@ -20,6 +20,7 @@ export function FleetingButton({ onYes, onNotSure }: FleetingButtonProps) {
   const [showNotSure, setShowNotSure] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const lastFleeTime = useRef(0);
+  const lastYesTapTime = useRef(0);
 
   // Detect mobile on mount
   useEffect(() => {
@@ -93,8 +94,23 @@ export function FleetingButton({ onYes, onNotSure }: FleetingButtonProps) {
   }, [getRandomPosition]);
 
   const handleYesClick = () => {
-    triggerHaptic("heavy");
-    onYes();
+    // On mobile, require double-tap
+    if (isMobile) {
+      const now = Date.now();
+      if (now - lastYesTapTime.current < 400) {
+        // Double tap detected
+        triggerHaptic("heavy");
+        onYes();
+      } else {
+        // First tap - give feedback
+        triggerHaptic("light");
+      }
+      lastYesTapTime.current = now;
+    } else {
+      // Desktop: single click works
+      triggerHaptic("heavy");
+      onYes();
+    }
   };
 
   const handleNotSure = () => {
