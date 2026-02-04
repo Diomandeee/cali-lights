@@ -10,9 +10,8 @@ interface NarrativeSectionProps {
 const narrativeLines = [
   { text: "Remember when I said we should go out for dinner?", delay: 0 },
   { text: "And then I never followed up...", delay: 3500 },
-  { text: "I want to make it right.", delay: 7000 },
-  { text: "Sometimes the best moments are the ones we're intentional about.", delay: 10500 },
-  { text: "So I have a question...", delay: 15000 },
+  { text: "Sometimes the best moments are the ones we're intentional about.", delay: 7000 },
+  { text: "So I have a question...", delay: 11500 },
 ];
 
 export function NarrativeSection({ onComplete }: NarrativeSectionProps) {
@@ -33,7 +32,7 @@ export function NarrativeSection({ onComplete }: NarrativeSectionProps) {
     const completeTimer = setTimeout(() => {
       setIsComplete(true);
       setTimeout(onComplete, 800);
-    }, 18500);
+    }, 15000);
     timers.push(completeTimer);
 
     return () => timers.forEach((t) => clearTimeout(t));
